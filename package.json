@@ -1,0 +1,31 @@
+{
+  "name": "fusion-engine-acquisition",
+  "version": "1.0.0",
+  "description": "24/7 Client Acquisition Engine & Lead Generation Dashboard for Fusion Engine Technology",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "static": "node staticServer.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "lead-generation",
+    "crm",
+    "automation",
+    "fusion-engine"
+  ],
+  "author": "Fusion Engine Technology",
+  "license": "MIT",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.0",
+    "axios": "^1.7.9",
+    "cheerio": "^1.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.10.0",
+    "qrcode-terminal": "^0.12.0"
+  }
+}

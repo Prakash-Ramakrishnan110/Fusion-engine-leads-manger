@@ -1,0 +1,450 @@
+[
+  {
+    "id": "log_1787498375225_4vr",
+    "timestamp": "2026-08-23T15:19:35.225Z",
+    "level": "INFO",
+    "message": "Starting 24/7 Lead Scraper for Category: [LMS] | Region: [India]",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498375237_89g",
+    "timestamp": "2026-08-23T15:19:35.237Z",
+    "level": "INFO",
+    "message": "Google Places API inactive/empty. Using GitHub B2B Resource Scraper for [LMS] in [India]...",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498375238_kc1",
+    "timestamp": "2026-08-23T15:19:35.238Z",
+    "level": "INFO",
+    "message": "Querying GitHub B2B Resource API for \"location:India school\"...",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498381974_v90",
+    "timestamp": "2026-08-23T15:19:41.974Z",
+    "level": "INFO",
+    "message": "GitHub B2B Resource API returned 10 prospective candidate leads.",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498381989_xb8",
+    "timestamp": "2026-08-23T15:19:41.989Z",
+    "level": "INFO",
+    "message": "Harvesting contact email for \"School of Devops\" (https://www.schoolofdevops.com)...",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498385157_yy3",
+    "timestamp": "2026-08-23T15:19:45.157Z",
+    "level": "INFO",
+    "message": "Discovered Lead: \"School of Devops\" | Score: 60% (Warm) | Email: None",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498385157_iur",
+    "timestamp": "2026-08-23T15:19:45.157Z",
+    "level": "INFO",
+    "message": "Harvesting contact email for \"DevOps School\" (https://www.DevOpsSchool.com)...",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498388039_040",
+    "timestamp": "2026-08-23T15:19:48.040Z",
+    "level": "INFO",
+    "message": "Discovered Lead: \"DevOps School\" | Score: 85% (Hot) | Email: contact@devopsschool.com",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498388040_lr0",
+    "timestamp": "2026-08-23T15:19:48.040Z",
+    "level": "INFO",
+    "message": "Harvesting contact email for \"Masai School\" (https://www.masaischool.com/)...",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498391699_sgp",
+    "timestamp": "2026-08-23T15:19:51.699Z",
+    "level": "INFO",
+    "message": "Discovered Lead: \"Masai School\" | Score: 60% (Warm) | Email: None",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498391699_1u8",
+    "timestamp": "2026-08-23T15:19:51.699Z",
+    "level": "INFO",
+    "message": "Harvesting contact email for \"School of AI, Trivandrum\" (https://www.schoolofaitvm.in/)...",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498392112_14k",
+    "timestamp": "2026-08-23T15:19:52.112Z",
+    "level": "INFO",
+    "message": "Discovered Lead: \"School of AI, Trivandrum\" | Score: 60% (Warm) | Email: None",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498392132_5ee",
+    "timestamp": "2026-08-23T15:19:52.132Z",
+    "level": "INFO",
+    "message": "Discovered Lead: \"School of AI, ML & Data Science\" | Score: 45% (Cold) | Email: None",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498392152_3pr",
+    "timestamp": "2026-08-23T15:19:52.153Z",
+    "level": "INFO",
+    "message": "Discovered Lead: \"AlmaBetter School\" | Score: 85% (Hot) | Email: admissions@almabetter.com",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498392153_n9f",
+    "timestamp": "2026-08-23T15:19:52.153Z",
+    "level": "INFO",
+    "message": "Harvesting contact email for \"The School of AI\" (https://theschoolof.ai/)...",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498396894_1vl",
+    "timestamp": "2026-08-23T15:19:56.894Z",
+    "level": "INFO",
+    "message": "Discovered Lead: \"The School of AI\" | Score: 60% (Warm) | Email: None",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498396904_wh4",
+    "timestamp": "2026-08-23T15:19:56.904Z",
+    "level": "INFO",
+    "message": "Discovered Lead: \"NST Student Developer Club\" | Score: 85% (Hot) | Email: support@nstsdc.org",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498396905_tgx",
+    "timestamp": "2026-08-23T15:19:56.905Z",
+    "level": "INFO",
+    "message": "Harvesting contact email for \"Aman Verma\" (https://amanvermai30.github.io/)...",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498398540_f9g",
+    "timestamp": "2026-08-23T15:19:58.540Z",
+    "level": "INFO",
+    "message": "Discovered Lead: \"Aman Verma\" | Score: 85% (Hot) | Email: vermaamanmr@gmail.com",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498398540_w4e",
+    "timestamp": "2026-08-23T15:19:58.540Z",
+    "level": "INFO",
+    "message": "Harvesting contact email for \"SANGRAM KESHARI SAHU\" (https://sangram-keshari-sahu-portfolio.netlify.app)...",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498403544_jg8",
+    "timestamp": "2026-08-23T15:20:03.544Z",
+    "level": "INFO",
+    "message": "Discovered Lead: \"SANGRAM KESHARI SAHU\" | Score: 85% (Hot) | Email: sangramkesharisahu96@gmail.com",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498403545_vpp",
+    "timestamp": "2026-08-23T15:20:03.545Z",
+    "level": "INFO",
+    "message": "Lead Scraping Run Complete. 10 new prospective leads added.",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498651974_8uf",
+    "timestamp": "2026-08-23T15:24:11.974Z",
+    "level": "INFO",
+    "message": "Fusion Engine REST API listening on http://127.0.0.1:3000",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498651976_84y",
+    "timestamp": "2026-08-23T15:24:11.976Z",
+    "level": "WARN",
+    "message": "@open-wa/wa-automate not active or headful browser unavailable. Operating in click-to-chat mode.",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498660884_g39",
+    "timestamp": "2026-08-23T15:24:20.884Z",
+    "level": "INFO",
+    "message": "Bot Status Changed: 🟢 BOT ONLINE",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498739563_uzn",
+    "timestamp": "2026-08-23T15:25:39.563Z",
+    "level": "INFO",
+    "message": "Toggled Opt-Out status for lead \"School of Devops\" to true",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498740688_a3b",
+    "timestamp": "2026-08-23T15:25:40.688Z",
+    "level": "INFO",
+    "message": "Toggled Opt-Out status for lead \"School of Devops\" to false",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498759204_5o6",
+    "timestamp": "2026-08-23T15:25:59.204Z",
+    "level": "INFO",
+    "message": "Bot Status Changed: 🔴 BOT PAUSED",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498940506_s4q",
+    "timestamp": "2026-08-23T15:29:00.506Z",
+    "level": "INFO",
+    "message": "Fusion Engine REST API listening on http://127.0.0.1:3000",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498940508_c5x",
+    "timestamp": "2026-08-23T15:29:00.508Z",
+    "level": "WARN",
+    "message": "@open-wa/wa-automate not active or headful browser unavailable. Operating in click-to-chat mode.",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787498945095_42q",
+    "timestamp": "2026-08-23T15:29:05.095Z",
+    "level": "INFO",
+    "message": "Bot Status Changed: 🟢 BOT ONLINE",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499000059_8cd",
+    "timestamp": "2026-08-23T15:30:00.059Z",
+    "level": "INFO",
+    "message": "⚡ 24/7 Cron Engine triggered: Performing automated lead discovery & follow-up touches...",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499000059_967",
+    "timestamp": "2026-08-23T15:30:00.059Z",
+    "level": "INFO",
+    "message": "Starting 24/7 Lead Scraper for Category: [AI] | Region: [Middle East]",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499000064_9dg",
+    "timestamp": "2026-08-23T15:30:00.064Z",
+    "level": "INFO",
+    "message": "Google Places API inactive/empty. Using GitHub B2B Resource Scraper for [AI] in [Middle East]...",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499000065_muw",
+    "timestamp": "2026-08-23T15:30:00.065Z",
+    "level": "INFO",
+    "message": "Querying GitHub B2B Resource API for \"location:Middle East agency\"...",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499000877_ctg",
+    "timestamp": "2026-08-23T15:30:00.877Z",
+    "level": "INFO",
+    "message": "GitHub B2B Resource API returned 0 prospective candidate leads.",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499000882_vla",
+    "timestamp": "2026-08-23T15:30:00.882Z",
+    "level": "INFO",
+    "message": "Lead Scraping & Auto-Outreach Run Complete. 0 leads processed.",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499000884_1ri",
+    "timestamp": "2026-08-23T15:30:00.885Z",
+    "level": "INFO",
+    "message": "⚡ [Cron Auto-Outreach] Executing Touch 1 (Pitch) for lead \"DevOps School\" (contact@devopsschool.com)...",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499008388_f1o",
+    "timestamp": "2026-08-23T15:30:08.388Z",
+    "level": "ERROR",
+    "message": "Email dispatch failed to test@example.com: SMTP_PASS is not configured in .env or Settings.",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499025917_gwn",
+    "timestamp": "2026-08-23T15:30:25.917Z",
+    "level": "ERROR",
+    "message": "Email dispatch failed to contact@devopsschool.com: SMTP_PASS is not configured in .env or Settings.",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499025921_b1g",
+    "timestamp": "2026-08-23T15:30:25.921Z",
+    "level": "INFO",
+    "message": "⚡ [Cron Auto-Outreach] Executing Touch 1 (Pitch) for lead \"AlmaBetter School\" (admissions@almabetter.com)...",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499035321_w9h",
+    "timestamp": "2026-08-23T15:30:35.321Z",
+    "level": "ERROR",
+    "message": "Email dispatch failed to admissions@almabetter.com: SMTP_PASS is not configured in .env or Settings.",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499035326_ghw",
+    "timestamp": "2026-08-23T15:30:35.326Z",
+    "level": "INFO",
+    "message": "⚡ [Cron Auto-Outreach] Executing Touch 1 (Pitch) for lead \"NST Student Developer Club\" (support@nstsdc.org)...",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499054965_q8r",
+    "timestamp": "2026-08-23T15:30:54.965Z",
+    "level": "ERROR",
+    "message": "Email dispatch failed to support@nstsdc.org: SMTP_PASS is not configured in .env or Settings.",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499054972_sx7",
+    "timestamp": "2026-08-23T15:30:54.972Z",
+    "level": "INFO",
+    "message": "⚡ [Cron Auto-Outreach] Executing Touch 1 (Pitch) for lead \"Aman Verma\" (vermaamanmr@gmail.com)...",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499079996_5kw",
+    "timestamp": "2026-08-23T15:31:19.996Z",
+    "level": "ERROR",
+    "message": "Email dispatch failed to vermaamanmr@gmail.com: SMTP_PASS is not configured in .env or Settings.",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499080000_lgw",
+    "timestamp": "2026-08-23T15:31:20.000Z",
+    "level": "INFO",
+    "message": "⚡ [Cron Auto-Outreach] Executing Touch 1 (Pitch) for lead \"SANGRAM KESHARI SAHU\" (sangramkesharisahu96@gmail.com)...",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499095129_puk",
+    "timestamp": "2026-08-23T15:31:35.129Z",
+    "level": "ERROR",
+    "message": "Email dispatch failed to sangramkesharisahu96@gmail.com: SMTP_PASS is not configured in .env or Settings.",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499201167_2ba",
+    "timestamp": "2026-08-23T15:33:21.167Z",
+    "level": "INFO",
+    "message": "Bot Status Changed: 🔴 BOT PAUSED",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499222669_naw",
+    "timestamp": "2026-08-23T15:33:42.669Z",
+    "level": "INFO",
+    "message": "Successfully dispatched email to fusionenginetechnology@gmail.com (<f0104fd8-a0b4-0eb4-8ce6-783f5c0dfe29@gmail.com>)",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499545248_rg1",
+    "timestamp": "2026-08-23T15:39:05.248Z",
+    "level": "INFO",
+    "message": "Fusion Engine REST API listening on http://127.0.0.1:3000",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499545251_rkd",
+    "timestamp": "2026-08-23T15:39:05.251Z",
+    "level": "WARN",
+    "message": "@open-wa/wa-automate not active or headful browser unavailable. Operating in click-to-chat mode.",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499555366_knu",
+    "timestamp": "2026-08-23T15:39:15.366Z",
+    "level": "INFO",
+    "message": "Dashboard login session authenticated successfully.",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499558080_x4y",
+    "timestamp": "2026-08-23T15:39:18.080Z",
+    "level": "INFO",
+    "message": "Bot Status Changed: 🟢 BOT ONLINE",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499705668_phj",
+    "timestamp": "2026-08-23T15:41:45.668Z",
+    "level": "INFO",
+    "message": "Successfully dispatched email to contact@devopsschool.com (<ddb71cd4-6fa9-2db8-4e99-bef7b6fbfdf4@gmail.com>)",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499733002_m11",
+    "timestamp": "2026-08-23T15:42:13.002Z",
+    "level": "INFO",
+    "message": "Bot Status Changed: 🔴 BOT PAUSED",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499739489_kev",
+    "timestamp": "2026-08-23T15:42:19.489Z",
+    "level": "INFO",
+    "message": "Successfully dispatched email to admissions@almabetter.com (<565eced3-c878-afb0-60ae-3f5d630de1ce@gmail.com>)",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499754665_ryv",
+    "timestamp": "2026-08-23T15:42:34.665Z",
+    "level": "INFO",
+    "message": "Successfully dispatched email to support@nstsdc.org (<ac82994d-79f3-428b-ef95-3ed508dcf80d@gmail.com>)",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499778239_72t",
+    "timestamp": "2026-08-23T15:42:58.239Z",
+    "level": "INFO",
+    "message": "Successfully dispatched email to vermaamanmr@gmail.com (<36c1cd1d-50fe-953d-41b8-d213f3b2f9b9@gmail.com>)",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787499809141_bl6",
+    "timestamp": "2026-08-23T15:43:29.141Z",
+    "level": "INFO",
+    "message": "Successfully dispatched email to sangramkesharisahu96@gmail.com (<930c8319-c29f-483b-158e-b200132b8015@gmail.com>)",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787500067533_q1i",
+    "timestamp": "2026-08-23T15:47:47.533Z",
+    "level": "INFO",
+    "message": "Successfully dispatched email to fusionenginetechnology@gmail.com (<f9026c8c-1558-d636-8d71-b66a6b52f527@gmail.com>)",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787500501804_8hc",
+    "timestamp": "2026-08-23T15:55:01.804Z",
+    "level": "INFO",
+    "message": "Bot Status Changed: 🟢 BOT ONLINE",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787500581087_6g6",
+    "timestamp": "2026-08-23T15:56:21.087Z",
+    "level": "INFO",
+    "message": "Fusion Engine REST API listening on http://127.0.0.1:3000",
+    "metadata": {}
+  },
+  {
+    "id": "log_1787500581092_qhp",
+    "timestamp": "2026-08-23T15:56:21.092Z",
+    "level": "WARN",
+    "message": "@open-wa/wa-automate not active or headful browser unavailable. Operating in click-to-chat mode.",
+    "metadata": {}
+  }
+]

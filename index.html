@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fusion Engine Technology — 24/7 Client Acquisition Engine</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- AUTH GATE SCREEN -->
+  <div id="authGate" class="auth-gate">
+    <div class="glass-card auth-card">
+      <div class="brand-logo" style="margin: 0 auto 16px auto; width:56px; height:56px; font-size:24px;">FE</div>
+      <h2>Fusion Engine Tech</h2>
+      <p>Internal Ops Dashboard Authentication</p>
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group" style="margin-bottom: 20px;">
+          <input type="password" id="authPassword" class="input-control" placeholder="Enter Dashboard Security PIN" required style="text-align: center; font-size: 16px;">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Unlock Dashboard</button>
+        <p id="loginError" style="color: var(--status-red); font-size: 13px; margin-top: 12px; display: none;"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN APP CONTAINER -->
+  <div class="app-container">
+
+    <!-- HEADER -->
+    <header class="app-header glass-card">
+      <div class="brand-wrapper">
+        <div class="brand-logo">FE</div>
+        <div class="brand-text">
+          <h1>Fusion Engine Technology</h1>
+          <p>24/7 Client Acquisition & Lead Generation Engine • fusionengine.in</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div id="botStatusPill" class="status-pill online" onclick="toggleBotStatus()">
+          <span class="status-dot"></span>
+          <span id="botStatusText">🟢 BOT ONLINE</span>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="logout()">Lock Session</button>
+      </div>
+    </header>
+
+    <!-- METRICS OVERVIEW (6 CARDS) -->
+    <section class="metrics-grid">
+      <div class="glass-card metric-card">
+        <div class="metric-header">
+          <span>Discovered Leads</span>
+          <div class="metric-icon blue">🔍</div>
+        </div>
+        <div class="metric-value" id="metricLeads">0</div>
+        <div class="metric-sub">Total candidates scraped</div>
+      </div>
+
+      <div class="glass-card metric-card">
+        <div class="metric-header">
+          <span>Hot Leads</span>
+          <div class="metric-icon red" style="background:var(--status-red-light); color:var(--status-red);">🔥</div>
+        </div>
+        <div class="metric-value" id="metricHotLeads">0</div>
+        <div class="metric-sub">Score ≥85% (High Intent)</div>
+      </div>
+
+      <div class="glass-card metric-card">
+        <div class="metric-header">
+          <span>WA Click-throughs</span>
+          <div class="metric-icon green">💬</div>
+        </div>
+        <div class="metric-value" id="metricWaClicks">0</div>
+        <div class="metric-sub">wa.me link generation touches</div>
+      </div>
+
+      <div class="glass-card metric-card">
+        <div class="metric-header">
+          <span>Emails Dispatched</span>
+          <div class="metric-icon indigo">✉️</div>
+        </div>
+        <div class="metric-value" id="metricEmailsSent">0</div>
+        <div class="metric-sub">Outreach pitches delivered</div>
+      </div>
+
+      <div class="glass-card metric-card">
+        <div class="metric-header">
+          <span>Replies Received</span>
+          <div class="metric-icon amber">📩</div>
+        </div>
+        <div class="metric-value" id="metricReplies">0</div>
+        <div class="metric-sub">Inbound prospect responses</div>
+      </div>
+
+      <div class="glass-card metric-card">
+        <div class="metric-header">
+          <span>Pipeline Value ($)</span>
+          <div class="metric-icon green">💰</div>
+        </div>
+        <div class="metric-value" id="metricPipeline">$0</div>
+        <div class="metric-sub">Estimated contract potential</div>
+      </div>
+    </section>
+
+    <!-- TAB NAVIGATION BAR -->
+    <nav class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('crmTab')">📋 Lead Pipeline CRM</button>
+      <button class="tab-btn" onclick="switchTab('sourcingTab')">🚀 Sourcing & AI Execution</button>
+      <button class="tab-btn" onclick="switchTab('followupTab')">🔄 Follow-Up Manager</button>
+      <button class="tab-btn" onclick="switchTab('proposalTab')">📄 Proposal Generator</button>
+      <button class="tab-btn" onclick="switchTab('settingsTab')">⚙️ Settings</button>
+    </nav>
+
+    <!-- TAB 1: LEAD PIPELINE CRM -->
+    <div id="crmTab" class="tab-content active">
+      <div class="toolbar glass-card" style="padding: 16px 20px;">
+        <div class="filter-group">
+          <select id="filterCategory" class="select-control" onchange="loadLeads()">
+            <option value="ALL">All Categories</option>
+            <option value="LMS">LMS & Education</option>
+            <option value="ERP">ERP & Internal Tools</option>
+            <option value="Apps">Web & Mobile Apps</option>
+            <option value="AI">AI & Automation</option>
+            <option value="Firmware">Firmware & IoT</option>
+          </select>
+
+          <select id="filterScore" class="select-control" onchange="loadLeads()">
+            <option value="ALL">All Score Tiers</option>
+            <option value="Hot">🔥 Hot (≥85%)</option>
+            <option value="Warm">⚡ Warm (50-84%)</option>
+            <option value="Cold">❄️ Cold (&lt;50%)</option>
+          </select>
+
+          <input type="text" id="filterSearch" class="input-control" placeholder="Search lead name or domain..." onkeyup="loadLeads()">
+        </div>
+
+        <button class="btn btn-primary" onclick="openManualLeadModal()">+ Add Manual Prospect</button>
+      </div>
+
+      <div class="table-wrapper glass-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Lead Name & Domain</th>
+              <th>Category</th>
+              <th>Region</th>
+              <th>Score</th>
+              <th>Contact Info</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="leadsTableBody">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 2: SOURCING & AI EXECUTION -->
+    <div id="sourcingTab" class="tab-content">
+      <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
+        <h3 style="margin-bottom: 16px; font-size: 18px;">Automated Sourcing & AI Pitch Controls</h3>
+        <div class="form-grid" style="margin-bottom: 20px;">
+          <div class="form-group">
+            <label>Target Service Category</label>
+            <select id="scrapeCategory" class="select-control">
+              <option value="LMS">LMS Platforms & Education</option>
+              <option value="ERP">Custom ERPs & Workflow Tools</option>
+              <option value="Apps">SaaS Web & Mobile Apps</option>
+              <option value="AI">AI Automation & Chatbots</option>
+              <option value="Firmware">Firmware & IoT Engineering</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Target Region</label>
+            <select id="scrapeRegion" class="select-control">
+              <option value="India">India (Bangalore, Mumbai, Delhi, Chennai, Hyd)</option>
+              <option value="USA">USA (California, New York, Texas, Florida)</option>
+              <option value="Europe">Europe (UK, Germany, Netherlands)</option>
+              <option value="Middle East">Middle East (Dubai, UAE, Saudi Arabia)</option>
+              <option value="Global">Global / Remote First</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <button class="btn btn-primary" onclick="triggerScraper()">⚡ Launch Scraper & AI Pitcher</button>
+          <button class="btn btn-secondary" onclick="fetchLogs()">🔄 Refresh Live Logs</button>
+        </div>
+      </div>
+
+      <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
+        <h3 style="margin-bottom: 12px;">Editable Gemini AI Pitch Prompt Template</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+          Variables available: <code>{{clientName}}</code>, <code>{{category}}</code>, <code>{{website}}</code>, <code>{{region}}</code>, <code>{{siteSummary}}</code>
+        </p>
+        <textarea id="promptTemplate" class="input-control" style="width: 100%; height: 160px; font-family: monospace; font-size: 13px;"></textarea>
+        <button class="btn btn-secondary btn-sm" onclick="savePromptTemplate()" style="margin-top: 12px;">Save Prompt Template</button>
+      </div>
+
+      <div class="glass-card" style="padding: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h3>Terminal Execution Stream</h3>
+          <span style="font-size: 12px; color: var(--text-muted);">Real-time server log feeds</span>
+        </div>
+        <div id="terminalLog" class="terminal-window">
+          <div class="log-line"><span class="log-time">[System Init]</span> Ready to capture 24/7 engine logs...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: FOLLOW-UP MANAGER -->
+    <div id="followupTab" class="tab-content">
+      <div class="form-grid" style="margin-bottom: 24px;">
+        <div class="glass-card" style="padding: 20px;">
+          <h4 style="margin-bottom: 8px;">WhatsApp Session Status</h4>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">@open-wa/wa-automate v4.76.0 (Reply-Only, No Cold Sends)</p>
+          <div id="waStatusBadge" class="badge badge-warm">Checking Session...</div>
+        </div>
+
+        <div class="glass-card" style="padding: 20px;">
+          <h4 style="margin-bottom: 8px;">SMTP Email Credentials Status</h4>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Nodemailer Gmail/Custom Transporter</p>
+          <div id="smtpStatusBadge" class="badge badge-warm">Configured</div>
+        </div>
+      </div>
+
+      <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
+        <h3 style="margin-bottom: 16px;">4-Touch Automated Follow-Up Schedule Editor</h3>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Touchpoint</th>
+                <th>Offset Day</th>
+                <th>Sequence Title</th>
+                <th>Offer Scope</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Touch 1</td>
+                <td>Day 1</td>
+                <td>Initial Pitch & Technical Opportunity Audit</td>
+                <td>Custom ERP / LMS / App Solution Overview</td>
+              </tr>
+              <tr>
+                <td>Touch 2</td>
+                <td>Day 3</td>
+                <td>Free Wireframe & System Architecture Offer</td>
+                <td>Interactive Figma / Scope Blueprint</td>
+              </tr>
+              <tr>
+                <td>Touch 3</td>
+                <td>Day 7</td>
+                <td>Relevant Portfolio Case Study</td>
+                <td>Link to https://prakash-portfolio-alpha.vercel.app/</td>
+              </tr>
+              <tr>
+                <td>Touch 4</td>
+                <td>Day 14</td>
+                <td>Final Breakup Email</td>
+                <td>Polite permission-close note</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- OPT-OUT LIST MANAGEMENT -->
+      <div class="glass-card" style="padding: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h3>Global Exclusion & Opt-Out List</h3>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="newOptOutInput" class="input-control" placeholder="email, phone, or domain">
+            <button class="btn btn-primary btn-sm" onclick="addManualOptOut()">+ Add Opt-Out</button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Blocked Identifier</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="optOutTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: PROPOSAL GENERATOR -->
+    <div id="proposalTab" class="tab-content">
+      <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
+        <h3 style="margin-bottom: 16px;">Generate Fixed-Price Scope of Work Proposal</h3>
+        <form onsubmit="generateSOWProposal(event)">
+          <div class="form-grid" style="margin-bottom: 16px;">
+            <div class="form-group">
+              <label>Client / Business Name</label>
+              <input type="text" id="propClientName" class="input-control" placeholder="e.g. Acme Global Logistics" required>
+            </div>
+            <div class="form-group">
+              <label>Target Tech Stack / Capabilities</label>
+              <input type="text" id="propTechStack" class="input-control" placeholder="e.g. Node.js, Custom ERP, React, PostgreSQL">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 20px;">
+            <label>Project Scope Description & Objectives</label>
+            <textarea id="propScope" class="input-control" placeholder="Describe client requirements, target features, modules, and workflows..." required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary">⚡ Generate SOW Proposal via Gemini AI</button>
+        </form>
+      </div>
+
+      <div class="glass-card" style="padding: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h3>Proposal Document Preview</h3>
+          <button class="btn btn-secondary btn-sm" onclick="copyProposalToClipboard()">📋 Copy Proposal Text</button>
+        </div>
+        <div id="proposalPreview" style="background: var(--bg-card-solid); border: 1px solid var(--border-color); padding: 24px; border-radius: var(--radius-md); font-family: sans-serif; white-space: pre-wrap; font-size: 14px; min-height: 250px;">
+          Submit the form above to generate a Fixed Price Scope of Work Proposal linking Fusion Engine's portfolio and WhatsApp click-to-chat.
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: SETTINGS -->
+    <div id="settingsTab" class="tab-content">
+      <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
+        <h3 style="margin-bottom: 20px;">System Settings & Cold Email Kill Switch</h3>
+        <form onsubmit="saveSettingsForm(event)">
+          <div class="form-grid" style="margin-bottom: 20px;">
+            <div class="form-group">
+              <label>Cold Email Kill Switch</label>
+              <select id="settingColdEmail" class="select-control">
+                <option value="true">🟢 ENABLED (Cold Emails Allowed)</option>
+                <option value="false">🔴 DISABLED (Kill Switch - Block All Cold Emails)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Scraper Rate Limit (Requests / Hour)</label>
+              <input type="number" id="settingRateLimit" class="input-control" value="60" min="10" max="300">
+            </div>
+          </div>
+
+          <h4 style="margin-top: 20px; margin-bottom: 12px;">API Keys & Credentials</h4>
+          <div class="form-grid" style="margin-bottom: 20px;">
+            <div class="form-group">
+              <label>Google Gemini API Key (Masked)</label>
+              <input type="password" id="settingGeminiKey" class="input-control" placeholder="Enter API Key to update">
+            </div>
+
+            <div class="form-group">
+              <label>SMTP Password (Masked)</label>
+              <input type="password" id="settingSmtpPass" class="input-control" placeholder="Enter App Password to update">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Save Settings Configuration</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL: ADD MANUAL PROSPECT -->
+  <div id="manualLeadModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Add Manual Prospect</h3>
+        <button class="close-btn" onclick="closeManualLeadModal()">&times;</button>
+      </div>
+      <form onsubmit="submitManualLead(event)">
+        <div class="form-grid" style="margin-bottom: 16px;">
+          <div class="form-group">
+            <label>Business / Lead Name *</label>
+            <input type="text" id="mName" class="input-control" required placeholder="Acme Academy">
+          </div>
+
+          <div class="form-group">
+            <label>Website Domain</label>
+            <input type="text" id="mWebsite" class="input-control" placeholder="https://acmeacademy.com">
+          </div>
+
+          <div class="form-group">
+            <label>Contact Email</label>
+            <input type="email" id="mEmail" class="input-control" placeholder="contact@acmeacademy.com">
+          </div>
+
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="text" id="mPhone" class="input-control" placeholder="+91 98765 43210">
+          </div>
+
+          <div class="form-group">
+            <label>Category</label>
+            <select id="mCategory" class="select-control">
+              <option value="LMS">LMS & Education</option>
+              <option value="ERP">ERP & Internal Systems</option>
+              <option value="Apps">Web & Mobile Apps</option>
+              <option value="AI">AI & Automation</option>
+              <option value="Firmware">Firmware & IoT</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Region</label>
+            <select id="mRegion" class="select-control">
+              <option value="India">India</option>
+              <option value="USA">USA</option>
+              <option value="Europe">Europe</option>
+              <option value="Middle East">Middle East</option>
+              <option value="Global">Global</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Save & Score Lead</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: VIEW & DISPATCH PITCH -->
+  <div id="pitchModal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 720px;">
+      <div class="modal-header">
+        <h3 id="pitchModalTitle">Personalized Outreach Pitch</h3>
+        <button class="close-btn" onclick="closePitchModal()">&times;</button>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Email Subject</label>
+          <input type="text" id="pSubject" class="input-control">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>Email Body (includes compliance footer & HMAC unsubscribe link)</label>
+          <textarea id="pBody" class="input-control" style="height: 180px;"></textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label>WhatsApp Intro (wa.me pre-filled message)</label>
+          <input type="text" id="pWaIntro" class="input-control" readonly>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button class="btn btn-secondary" onclick="closePitchModal()">Cancel</button>
+        <button class="btn btn-primary" id="btnDispatchEmail" onclick="sendPitchEmail()">✉️ Dispatch Email Now</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

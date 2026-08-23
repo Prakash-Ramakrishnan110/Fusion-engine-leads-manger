@@ -1,0 +1,425 @@
+[
+  {
+    "id": "lead_1787498385145_y3iev",
+    "name": "School of Devops",
+    "website": "https://www.schoolofdevops.com",
+    "email": "",
+    "phone": "",
+    "category": "LMS",
+    "region": "India",
+    "address": "Bangalore, India",
+    "rating": 5,
+    "reviewsCount": 172,
+    "siteSummary": "GitHub Profile: \"Specialized Devops and Cloud Training School \"",
+    "score": 60,
+    "tier": "Warm",
+    "estimatedValue": 6000,
+    "scoreBreakdown": [
+      {
+        "criteria": "Active Website Present",
+        "points": 15
+      },
+      {
+        "criteria": "Established Reputation (Rating 4.0+ & Reviews)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Category Match (LMS & Education)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Region Match (India)",
+        "points": 15
+      }
+    ],
+    "status": "Discovered",
+    "touchCount": 0,
+    "lastTouchAt": null,
+    "optedOut": false,
+    "createdAt": "2026-08-23T15:19:45.147Z",
+    "updatedAt": "2026-08-23T15:25:50.257Z",
+    "waClickCount": 1,
+    "pitchSubject": "Custom Engineering & Automation for School of Devops",
+    "pitchBody": "{\\n  \\\"subject\\\": \\\"Custom LMS automation for School of Devops\\\",\\n  \\\"emailBody\\\": \\\"Hi Team,\\\\n\\\\nManaging hands-on DevOps training",
+    "whatsappIntro": "Hi School of Devops, saw your site (https://www.schoolofdevops.com). We build custom ERPs, LMS portals, and apps at https://fusionengine.in."
+  },
+  {
+    "id": "lead_1787498388032_vvdi6",
+    "name": "DevOps School",
+    "website": "https://www.DevOpsSchool.com",
+    "email": "contact@devopsschool.com",
+    "phone": "",
+    "category": "LMS",
+    "region": "India",
+    "address": "India",
+    "rating": 5,
+    "reviewsCount": 72,
+    "siteSummary": "Page Title: \"Devopsschool.com\"",
+    "score": 85,
+    "tier": "Hot",
+    "estimatedValue": 6000,
+    "scoreBreakdown": [
+      {
+        "criteria": "Direct Email Available",
+        "points": 25
+      },
+      {
+        "criteria": "Active Website Present",
+        "points": 15
+      },
+      {
+        "criteria": "Established Reputation (Rating 4.0+ & Reviews)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Category Match (LMS & Education)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Region Match (India)",
+        "points": 15
+      }
+    ],
+    "status": "Pitched",
+    "touchCount": 1,
+    "lastTouchAt": "2026-08-23T15:41:45.683Z",
+    "optedOut": false,
+    "createdAt": "2026-08-23T15:19:48.033Z",
+    "updatedAt": "2026-08-23T15:41:45.701Z",
+    "pitchSubject": "Scaling DevOps School's Digital Stack — Fusion Engine Technology",
+    "pitchBody": "Hi DevOps School,\n\nI was looking into LMS workflows for businesses in India and reached out to see how your current digital setup is performing.\n\nAt Fusion Engine Technology, we design and build custom ERP systems, LMS platforms, web/mobile applications, and AI workflow automations tailored specifically for scaling operations.\n\nYou can review our client case studies and technical work here:\nPortfolio: https://prakash-portfolio-alpha.vercel.app/\nWebsite: https://fusionengine.in\n\nWould you be open to a brief 10-minute discovery chat this week to explore building a custom platform for DevOps School?\n\nDirect WhatsApp: https://wa.me/916369884331\n\nBest regards,\nEngineering Team\nFusion Engine Technology",
+    "whatsappIntro": "Hi DevOps School, reached out from Fusion Engine (https://fusionengine.in). We specialize in building custom LMS systems and mobile apps."
+  },
+  {
+    "id": "lead_1787498391685_1xy00",
+    "name": "Masai School",
+    "website": "https://www.masaischool.com/",
+    "email": "",
+    "phone": "",
+    "category": "LMS",
+    "region": "India",
+    "address": "Bangalore, India",
+    "rating": 5,
+    "reviewsCount": 8,
+    "siteSummary": "Page Title: \"AI-Ready Programs from India’s Top Institutes | iHUB IITs, I\"",
+    "score": 60,
+    "tier": "Warm",
+    "estimatedValue": 6000,
+    "scoreBreakdown": [
+      {
+        "criteria": "Active Website Present",
+        "points": 15
+      },
+      {
+        "criteria": "Established Reputation (Rating 4.0+ & Reviews)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Category Match (LMS & Education)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Region Match (India)",
+        "points": 15
+      }
+    ],
+    "status": "Discovered",
+    "touchCount": 0,
+    "lastTouchAt": null,
+    "optedOut": false,
+    "createdAt": "2026-08-23T15:19:51.688Z",
+    "updatedAt": "2026-08-23T15:19:51.688Z"
+  },
+  {
+    "id": "lead_1787498392104_eukh1",
+    "name": "School of AI, Trivandrum",
+    "website": "https://www.schoolofaitvm.in/",
+    "email": "",
+    "phone": "",
+    "category": "LMS",
+    "region": "India",
+    "address": "Trivandrum , Kerala , India",
+    "rating": 5,
+    "reviewsCount": 18,
+    "siteSummary": "Active GitHub Tech Profile",
+    "score": 60,
+    "tier": "Warm",
+    "estimatedValue": 6000,
+    "scoreBreakdown": [
+      {
+        "criteria": "Active Website Present",
+        "points": 15
+      },
+      {
+        "criteria": "Established Reputation (Rating 4.0+ & Reviews)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Category Match (LMS & Education)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Region Match (India)",
+        "points": 15
+      }
+    ],
+    "status": "Discovered",
+    "touchCount": 0,
+    "lastTouchAt": null,
+    "optedOut": false,
+    "createdAt": "2026-08-23T15:19:52.105Z",
+    "updatedAt": "2026-08-23T15:19:52.105Z"
+  },
+  {
+    "id": "lead_1787498392113_wqin0",
+    "name": "School of AI, ML & Data Science",
+    "website": "",
+    "email": "",
+    "phone": "",
+    "category": "LMS",
+    "region": "India",
+    "address": "Ghaziabad, India",
+    "rating": 5,
+    "reviewsCount": 6,
+    "siteSummary": "GitHub Profile: \"The School of AI, ML & Data Science functioning within the K\"",
+    "score": 45,
+    "tier": "Cold",
+    "estimatedValue": 6000,
+    "scoreBreakdown": [
+      {
+        "criteria": "Established Reputation (Rating 4.0+ & Reviews)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Category Match (LMS & Education)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Region Match (India)",
+        "points": 15
+      }
+    ],
+    "status": "Discovered",
+    "touchCount": 0,
+    "lastTouchAt": null,
+    "optedOut": false,
+    "createdAt": "2026-08-23T15:19:52.125Z",
+    "updatedAt": "2026-08-23T15:19:52.125Z"
+  },
+  {
+    "id": "lead_1787498392132_b7gq0",
+    "name": "AlmaBetter School",
+    "website": "https://www.almabetter.com",
+    "email": "admissions@almabetter.com",
+    "phone": "",
+    "category": "LMS",
+    "region": "India",
+    "address": "Bangalore, India",
+    "rating": 5,
+    "reviewsCount": 36,
+    "siteSummary": "GitHub Profile: \"Learn. Earn. Return.\"",
+    "score": 85,
+    "tier": "Hot",
+    "estimatedValue": 6000,
+    "scoreBreakdown": [
+      {
+        "criteria": "Direct Email Available",
+        "points": 25
+      },
+      {
+        "criteria": "Active Website Present",
+        "points": 15
+      },
+      {
+        "criteria": "Established Reputation (Rating 4.0+ & Reviews)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Category Match (LMS & Education)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Region Match (India)",
+        "points": 15
+      }
+    ],
+    "status": "Pitched",
+    "touchCount": 1,
+    "lastTouchAt": "2026-08-23T15:42:19.496Z",
+    "optedOut": false,
+    "createdAt": "2026-08-23T15:19:52.149Z",
+    "updatedAt": "2026-08-23T15:42:19.503Z"
+  },
+  {
+    "id": "lead_1787498396885_vp1e2",
+    "name": "The School of AI",
+    "website": "https://theschoolof.ai/",
+    "email": "",
+    "phone": "",
+    "category": "LMS",
+    "region": "India",
+    "address": "Bengaluru, India",
+    "rating": 5,
+    "reviewsCount": 101,
+    "siteSummary": "Page Title: \"The School of AI (TSAI) — Train Frontier LLMs, Build Agentic\"",
+    "score": 60,
+    "tier": "Warm",
+    "estimatedValue": 6000,
+    "scoreBreakdown": [
+      {
+        "criteria": "Active Website Present",
+        "points": 15
+      },
+      {
+        "criteria": "Established Reputation (Rating 4.0+ & Reviews)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Category Match (LMS & Education)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Region Match (India)",
+        "points": 15
+      }
+    ],
+    "status": "Discovered",
+    "touchCount": 0,
+    "lastTouchAt": null,
+    "optedOut": false,
+    "createdAt": "2026-08-23T15:19:56.886Z",
+    "updatedAt": "2026-08-23T15:19:56.886Z"
+  },
+  {
+    "id": "lead_1787498396895_hiq97",
+    "name": "NST Student Developer Club",
+    "website": "https://www.nstsdc.org",
+    "email": "support@nstsdc.org",
+    "phone": "",
+    "category": "LMS",
+    "region": "India",
+    "address": "India",
+    "rating": 5,
+    "reviewsCount": 82,
+    "siteSummary": "GitHub Profile: \"Newton School of Technology\"",
+    "score": 85,
+    "tier": "Hot",
+    "estimatedValue": 6000,
+    "scoreBreakdown": [
+      {
+        "criteria": "Direct Email Available",
+        "points": 25
+      },
+      {
+        "criteria": "Active Website Present",
+        "points": 15
+      },
+      {
+        "criteria": "Established Reputation (Rating 4.0+ & Reviews)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Category Match (LMS & Education)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Region Match (India)",
+        "points": 15
+      }
+    ],
+    "status": "Pitched",
+    "touchCount": 1,
+    "lastTouchAt": "2026-08-23T15:42:34.668Z",
+    "optedOut": false,
+    "createdAt": "2026-08-23T15:19:56.900Z",
+    "updatedAt": "2026-08-23T15:42:34.673Z"
+  },
+  {
+    "id": "lead_1787498398531_vj085",
+    "name": "Aman Verma",
+    "website": "https://amanvermai30.github.io/",
+    "email": "vermaamanmr@gmail.com",
+    "phone": "",
+    "category": "LMS",
+    "region": "India",
+    "address": "India",
+    "rating": 5,
+    "reviewsCount": 21,
+    "siteSummary": "Page Title: \"Aman Verma | Java Backend Developer\"",
+    "score": 85,
+    "tier": "Hot",
+    "estimatedValue": 6000,
+    "scoreBreakdown": [
+      {
+        "criteria": "Direct Email Available",
+        "points": 25
+      },
+      {
+        "criteria": "Active Website Present",
+        "points": 15
+      },
+      {
+        "criteria": "Established Reputation (Rating 4.0+ & Reviews)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Category Match (LMS & Education)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Region Match (India)",
+        "points": 15
+      }
+    ],
+    "status": "Pitched",
+    "touchCount": 1,
+    "lastTouchAt": "2026-08-23T15:42:58.254Z",
+    "optedOut": false,
+    "createdAt": "2026-08-23T15:19:58.534Z",
+    "updatedAt": "2026-08-23T15:42:58.259Z"
+  },
+  {
+    "id": "lead_1787498403536_lda85",
+    "name": "SANGRAM KESHARI SAHU",
+    "website": "https://sangram-keshari-sahu-portfolio.netlify.app",
+    "email": "sangramkesharisahu96@gmail.com",
+    "phone": "",
+    "category": "LMS",
+    "region": "India",
+    "address": "Berhampur, Odisha, 761001, India",
+    "rating": 5,
+    "reviewsCount": 29,
+    "siteSummary": "Page Title: \"Sangram Keshari's Portfolio\"",
+    "score": 85,
+    "tier": "Hot",
+    "estimatedValue": 6000,
+    "scoreBreakdown": [
+      {
+        "criteria": "Direct Email Available",
+        "points": 25
+      },
+      {
+        "criteria": "Active Website Present",
+        "points": 15
+      },
+      {
+        "criteria": "Established Reputation (Rating 4.0+ & Reviews)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Category Match (LMS & Education)",
+        "points": 15
+      },
+      {
+        "criteria": "Target Region Match (India)",
+        "points": 15
+      }
+    ],
+    "status": "Pitched",
+    "touchCount": 1,
+    "lastTouchAt": "2026-08-23T15:43:29.145Z",
+    "optedOut": false,
+    "createdAt": "2026-08-23T15:20:03.538Z",
+    "updatedAt": "2026-08-23T15:43:29.149Z"
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "botActive": true,
+  "coldEmailEnabled": true,
+  "scraperRateLimit": 60,
+  "promptTemplate": "",
+  "smtpVerified": false,
+  "whatsappConnected": false,
+  "geminiKeySet": false,
+  "updatedAt": "2026-08-23T15:55:01.795Z"
+}
