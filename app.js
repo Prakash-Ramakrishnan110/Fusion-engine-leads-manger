@@ -182,8 +182,12 @@ function renderLeadsTable(leads) {
     if (l.tier === 'Hot') badgeClass = 'badge-hot';
     else if (l.tier === 'Warm') badgeClass = 'badge-warm';
 
+    let targetPhone = (l.phone || '').replace(/\D/g, '');
+    if (targetPhone.length === 10) targetPhone = '91' + targetPhone;
+    if (!targetPhone || targetPhone.length < 10) targetPhone = '916369884331';
+
     const waEncodedMsg = encodeURIComponent(l.whatsappIntro || `Hi ${l.name}, reached out from Fusion Engine Technology (${l.website || 'fusionengine.in'}). We build custom ${l.category || 'software'} platforms.`);
-    const waLink = `https://wa.me/916369884331?text=${waEncodedMsg}`;
+    const waLink = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${waEncodedMsg}`;
 
     const discoveredTime = l.createdAt 
       ? new Date(l.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
