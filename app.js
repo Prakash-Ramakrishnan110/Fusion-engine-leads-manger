@@ -185,6 +185,10 @@ function renderLeadsTable(leads) {
     const waEncodedMsg = encodeURIComponent(l.whatsappIntro || `Hi ${l.name}, reached out from Fusion Engine Technology (${l.website || 'fusionengine.in'}). We build custom ${l.category || 'software'} platforms.`);
     const waLink = `https://wa.me/916369884331?text=${waEncodedMsg}`;
 
+    const discoveredTime = l.createdAt 
+      ? new Date(l.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+      : 'Recently';
+
     return `
       <tr>
         <td>
@@ -199,6 +203,9 @@ function renderLeadsTable(leads) {
         <td style="font-size:12px;">
           ${l.email ? `<div>✉️ ${escapeHtml(l.email)}</div>` : '<div style="color:var(--text-light)">No Email</div>'}
           ${l.phone ? `<div>📞 ${escapeHtml(l.phone)}</div>` : ''}
+        </td>
+        <td style="font-size:12px; color:var(--text-muted); white-space:nowrap;">
+          🕒 ${discoveredTime}
         </td>
         <td>
           <span class="badge" style="background:#E2E8F0; color:#334155;">${l.status || 'Discovered'}</span>

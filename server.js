@@ -127,6 +127,9 @@ app.get('/api/leads', (req, res) => {
     leads = leads.filter(l => (l.name || '').toLowerCase().includes(q) || (l.email || '').toLowerCase().includes(q) || (l.website || '').toLowerCase().includes(q));
   }
 
+  // Sort leads newest first so newly discovered candidates appear at top
+  leads.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
   res.json({ leads });
 });
 
