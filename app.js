@@ -90,8 +90,11 @@ async function initDashboard() {
   loadOptOuts();
   loadSettings();
 
-  // Poll metrics and logs every 10 seconds
-  setInterval(fetchMetrics, 10000);
+  // Poll metrics, leads CRM table, and logs every 5 seconds
+  setInterval(() => {
+    fetchMetrics();
+    loadLeads();
+  }, 5000);
   setInterval(fetchLogs, 5000);
 }
 
