@@ -147,14 +147,33 @@ async function scrapeGooglePlaces(category, region) {
 }
 
 /**
+ * Resolves broad region names to target business cities for scraper queries
+ */
+function expandRegionQuery(region) {
+  if (!region) return 'Dubai UAE';
+  const r = region.toLowerCase();
+  if (r.includes('middle east') || r.includes('uae') || r.includes('dubai')) {
+    return 'Dubai UAE';
+  }
+  if (r.includes('india') || r.includes('bangalore') || r.includes('mumbai')) {
+    return 'Bangalore India';
+  }
+  if (r.includes('us') || r.includes('usa') || r.includes('america')) {
+    return 'Austin Texas USA';
+  }
+  return region;
+}
+
+/**
  * GitHub Resource B2B Lead Scraper
  * Searches GitHub API for prospective technology agencies, companies, and software organizations
  */
 async function scrapeGitHubLeads(category, region) {
   const categoryObj = TARGET_CATEGORIES.find(c => c.id === category) || TARGET_CATEGORIES[0];
   const queryTerm = categoryObj.keywords ? categoryObj.keywords[0] : categoryObj.name;
+  const targetLocation = expandRegionQuery(region);
   
-  const query = `location:${region} ${queryTerm}`;
+  const query = `location:${targetLocation} ${queryTerm}`;
   appendSystemLog('INFO', `Querying GitHub B2B Resource API for "${query}"...`);
 
   try {
@@ -217,11 +236,12 @@ async function scrapeGitHubLeads(category, region) {
 async function scrapeGoogleMapsLeads(category, region) {
   const categoryObj = TARGET_CATEGORIES.find(c => c.id === category) || TARGET_CATEGORIES[0];
   const queryTerm = categoryObj.keywords ? categoryObj.keywords[0] : categoryObj.name;
+  const targetLocation = expandRegionQuery(region);
   
-  appendSystemLog('INFO', `Querying Google Maps Lead Engine for "${queryTerm}" in [${region}]...`);
+  appendSystemLog('INFO', `Querying Google Maps Lead Engine for "${queryTerm}" in [${targetLocation}]...`);
 
   try {
-    const searchUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(`${queryTerm} in ${region} website phone`)}`;
+    const searchUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(`${queryTerm} in ${targetLocation} website phone`)}`;
     const res = await axios.get(searchUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
