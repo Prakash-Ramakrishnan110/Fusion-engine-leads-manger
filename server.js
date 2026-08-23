@@ -361,9 +361,9 @@ cron.schedule('*/15 * * * *', async () => {
 });
 
 function startApiServer(portToTry) {
-  const server = app.listen(portToTry, HOST, () => {
-    appendSystemLog('INFO', `Fusion Engine REST API listening on http://${HOST}:${portToTry}`);
-    console.log(`[API Server] Running on http://${HOST}:${portToTry}`);
+  const server = app.listen(portToTry, '0.0.0.0', () => {
+    appendSystemLog('INFO', `Fusion Engine REST API listening on http://0.0.0.0:${portToTry}`);
+    console.log(`[API Server] Running on http://0.0.0.0:${portToTry}`);
     
     initializeWhatsAppBot().catch(_ => {});
   });
