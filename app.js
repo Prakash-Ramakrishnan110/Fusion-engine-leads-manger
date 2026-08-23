@@ -21,7 +21,7 @@ async function discoverApiBase() {
         API_BASE = `http://${API_HOST}:${p}/api`;
         break;
       }
-    } catch (_) {}
+    } catch (_) { }
   }
 }
 let authToken = localStorage.getItem('FE_AUTH_TOKEN') || '';
@@ -122,7 +122,7 @@ async function fetchMetrics() {
       pill.className = 'status-pill paused';
       text.textContent = '🔴 BOT PAUSED';
     }
-  } catch (_) {}
+  } catch (_) { }
 }
 
 async function toggleBotStatus() {
@@ -182,14 +182,10 @@ function renderLeadsTable(leads) {
     if (l.tier === 'Hot') badgeClass = 'badge-hot';
     else if (l.tier === 'Warm') badgeClass = 'badge-warm';
 
-    let targetPhone = (l.phone || '').replace(/\D/g, '');
-    if (targetPhone.length === 10) targetPhone = '91' + targetPhone;
-    if (!targetPhone || targetPhone.length < 10) targetPhone = '916369884331';
-
     const waEncodedMsg = encodeURIComponent(l.whatsappIntro || `Hi ${l.name}, reached out from Fusion Engine Technology (${l.website || 'fusionengine.in'}). We build custom ${l.category || 'software'} platforms.`);
-    const waLink = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${waEncodedMsg}`;
+    const waLink = `https://wa.me/916369884331?text=${waEncodedMsg}`;
 
-    const discoveredTime = l.createdAt 
+    const discoveredTime = l.createdAt
       ? new Date(l.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
       : 'Recently';
 
@@ -230,7 +226,7 @@ async function trackWaClick(leadId) {
   try {
     await fetch(`${API_BASE}/leads/${leadId}/whatsapp`, { headers: apiHeaders() });
     setTimeout(fetchMetrics, 1000);
-  } catch (_) {}
+  } catch (_) { }
 }
 
 async function toggleOptOut(leadId) {
@@ -243,6 +239,25 @@ async function toggleOptOut(leadId) {
     loadOptOuts();
   } catch (err) {
     alert('Failed to toggle opt-out.');
+  }
+}
+
+async function clearPipelineData() {
+  if (!confirm('Are you sure you want to clear all leads and reset the pipeline? This will remove existing candidates so new leads can be scraped fresh.')) return;
+  try {
+    const res = await fetch(`${API_BASE}/leads/clear`, {
+      method: 'POST',
+      headers: apiHeaders()
+    });
+    const data = await res.json();
+    if (data.success) {
+      loadLeads();
+      fetchMetrics();
+      fetchLogs();
+      alert('Pipeline CRM reset successfully! You can now launch a fresh scrape.');
+    }
+  } catch (err) {
+    alert('Failed to clear pipeline.');
   }
 }
 
@@ -311,7 +326,7 @@ async function openPitchModal(leadId) {
         document.getElementById('pBody').value = data.pitch.emailBody;
         document.getElementById('pWaIntro').value = data.pitch.whatsappIntro;
       }
-    } catch (_) {}
+    } catch (_) { }
   }
 }
 
@@ -378,7 +393,7 @@ async function fetchLogs() {
     const res = await fetch(`${API_BASE}/logs`, { headers: apiHeaders() });
     const data = await res.json();
     renderLogs(data.logs || []);
-  } catch (_) {}
+  } catch (_) { }
 }
 
 function renderLogs(logs) {
@@ -431,7 +446,7 @@ async function loadOptOuts() {
         <td><button class="btn btn-sm btn-secondary" onclick="removeManualOptOut('${escapeHtml(item)}')">Remove Block</button></td>
       </tr>
     `).join('');
-  } catch (_) {}
+  } catch (_) { }
 }
 
 async function addManualOptOut() {
@@ -447,7 +462,7 @@ async function addManualOptOut() {
     });
     input.value = '';
     loadOptOuts();
-  } catch (_) {}
+  } catch (_) { }
 }
 
 async function removeManualOptOut(identifier) {
@@ -458,7 +473,7 @@ async function removeManualOptOut(identifier) {
       body: JSON.stringify({ identifier })
     });
     loadOptOuts();
-  } catch (_) {}
+  } catch (_) { }
 }
 
 // --- TAB 4: PROPOSAL GENERATOR ---
@@ -521,7 +536,7 @@ async function loadSettings() {
       waBadge.className = 'badge badge-warm';
       waBadge.textContent = '⚡ Click-to-Chat Mode Active';
     }
-  } catch (_) {}
+  } catch (_) { }
 }
 
 async function saveSettingsForm(e) {

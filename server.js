@@ -217,6 +217,13 @@ app.get('/api/leads/:id/whatsapp', (req, res) => {
   res.json(waResult);
 });
 
+app.post('/api/leads/clear', async (req, res) => {
+  await saveLeads([]);
+  await saveMessageLogs([]);
+  appendSystemLog('INFO', 'Pipeline CRM reset. All old leads cleared.');
+  res.json({ success: true, message: 'Pipeline cleared successfully.' });
+});
+
 app.post('/api/leads/:id/optout', async (req, res) => {
   const { id } = req.params;
   const leads = getLeads();

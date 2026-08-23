@@ -134,7 +134,10 @@
           <input type="text" id="filterSearch" class="input-control" placeholder="Search lead name or domain..." onkeyup="loadLeads()">
         </div>
 
-        <button class="btn btn-primary" onclick="openManualLeadModal()">+ Add Manual Prospect</button>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-secondary" onclick="clearPipelineData()" style="color:var(--status-red); border-color:var(--status-red-light);">🗑️ Clear Pipeline</button>
+          <button class="btn btn-primary" onclick="openManualLeadModal()">+ Add Manual Prospect</button>
+        </div>
       </div>
 
       <div class="table-wrapper glass-card">
