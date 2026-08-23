@@ -3,10 +3,14 @@
  */
 
 const API_HOST = window.location.hostname || '127.0.0.1';
-let API_BASE = `http://${API_HOST}:3000/api`;
+let API_BASE = `${window.location.protocol}//${window.location.host}/api`;
 
-// Auto-discover active API port if default :3000 shifted
+// Auto-discover active API port if running locally and port shifted
 async function discoverApiBase() {
+  if (API_HOST !== '127.0.0.1' && API_HOST !== 'localhost') {
+    API_BASE = `${window.location.protocol}//${window.location.host}/api`;
+    return;
+  }
   const ports = [3000, 3001, 3002, 3005];
   for (const p of ports) {
     try {

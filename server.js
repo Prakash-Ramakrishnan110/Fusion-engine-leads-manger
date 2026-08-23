@@ -27,12 +27,13 @@ const { registerOptOut, unregisterOptOut } = require('./src/outreach/optOutManag
 const { initializeWhatsAppBot, processInboundReply } = require('./src/bot/replyHandler');
 
 const app = express();
-const HOST = process.env.HOST || '127.0.0.1'; // BIND TO LOCALHOST ONLY
-const PORT = parseInt(process.env.PORT_API || '3000', 10);
+const HOST = process.env.HOST || '0.0.0.0';
+const PORT = parseInt(process.env.PORT || process.env.PORT_API || '3000', 10);
 const PASSWORD = process.env.DASHBOARD_PASSWORD || 'fusion2026';
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(__dirname));
 
 // --- 1. PUBLIC ENDPOINTS (No Auth Token Required) ---
 app.post('/api/auth/login', (req, res) => {
