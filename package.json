@@ -5,9 +5,9 @@
   "main": "server.js",
   "type": "commonjs",
   "scripts": {
-    "start": "node server.js",
+    "start": "node init && node server.js",
     "static": "node staticServer.js",
-    "dev": "node server.js"
+    "dev": "node init && node server.js"
   },
   "keywords": [
     "lead-generation",
