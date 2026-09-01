@@ -125,8 +125,44 @@ Write a concise, high-converting professional follow-up response. Reference our 
   return replyText;
 }
 
+/**
+ * Automates outbound WhatsApp messages using open-wa.
+ * Gracefully falls back to manual Click-to-Chat if uninitialized.
+ */
+async function sendOutboundWhatsApp(phone, text) {
+  if (waClientInstance) {
+    try {
+      const chatId = `${phone.replace(/\D/g, '')}@c.us`;
+      await waClientInstance.sendText(chatId, text);
+      appendSystemLog('INFO', `[WhatsApp Autopilot] Sent outbound message to ${phone}`);
+      logMessage({
+        type: 'WHATSAPP_DISPATCH',
+        sender: 'Fusion_Engine_Bot',
+        receiver: phone,
+        content: text,
+        timestamp: new Date().toISOString()
+      });
+      return true;
+    } catch (err) {
+      appendSystemLog('ERROR', `[WhatsApp Autopilot] Failed to send to ${phone}: ${err.message}`);
+    }
+  } else {
+    // Graceful fallback if open-wa isn't initialized or npm install failed
+    appendSystemLog('WARN', `[WhatsApp Mode: Manual] Autopilot unavailable. Generated message for ${phone} saved. Requires manual dispatch via dashboard Click-to-Chat.`);
+    logMessage({
+      type: 'WHATSAPP_DISPATCH_PENDING',
+      sender: 'System',
+      receiver: phone,
+      content: text,
+      timestamp: new Date().toISOString()
+    });
+  }
+  return false;
+}
+
 module.exports = {
   initializeWhatsAppBot,
   handleInboundWhatsAppMessage,
-  processInboundReply
+  processInboundReply,
+  sendOutboundWhatsApp
 };

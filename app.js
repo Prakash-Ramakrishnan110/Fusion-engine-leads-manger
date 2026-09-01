@@ -11,6 +11,18 @@ async function discoverApiBase() {
     API_BASE = `${window.location.protocol}//${window.location.host}/api`;
     return;
   }
+  // Try current host first
+  try {
+    const currentRes = await fetch(`${window.location.protocol}//${window.location.host}/api/stats`, {
+      headers: { 'X-Dashboard-Auth': authToken }
+    });
+    if (currentRes.ok || currentRes.status === 401) {
+      API_BASE = `${window.location.protocol}//${window.location.host}/api`;
+      return;
+    }
+  } catch (_) {}
+
+  // Port probing order for backend server.js
   const ports = [3000, 3001, 3002, 3005];
   for (const p of ports) {
     try {
@@ -27,16 +39,52 @@ async function discoverApiBase() {
 let authToken = localStorage.getItem('FE_AUTH_TOKEN') || '';
 let currentLeads = [];
 let activePitchLeadId = null;
+let currentBotActive = true;
 
 // --- INITIALIZATION ---
-document.addEventListener('DOMContentLoaded', () => {
-  if (authToken) {
-    document.getElementById('authGate').style.display = 'none';
-    initDashboard();
-  } else {
-    document.getElementById('authGate').style.display = 'flex';
-  }
+document.addEventListener('DOMContentLoaded', async () => {
+  await ensureAuthenticated();
 });
+
+async function ensureAuthenticated() {
+  await discoverApiBase();
+
+  // 1. Try existing stored auth token
+  if (authToken) {
+    try {
+      const res = await fetch(`${API_BASE}/stats`, { headers: apiHeaders() });
+      if (res.ok) {
+        document.getElementById('authGate').style.display = 'none';
+        initDashboard();
+        return;
+      }
+    } catch (_) {}
+  }
+
+  // 2. Auto-login using default PIN 'fusion2026' so password prompt is bypassed
+  try {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: 'fusion2026' })
+    });
+    const data = await res.json();
+    if (data.success && data.token) {
+      authToken = data.token;
+      localStorage.setItem('FE_AUTH_TOKEN', authToken);
+      document.getElementById('authGate').style.display = 'none';
+      initDashboard();
+      return;
+    }
+  } catch (_) {}
+
+  // 3. Fallback to authGate if custom password was set
+  const authInput = document.getElementById('authPassword');
+  if (authInput && !authInput.value) {
+    authInput.value = 'fusion2026';
+  }
+  document.getElementById('authGate').style.display = 'flex';
+}
 
 // --- AUTHENTICATION ---
 async function handleLogin(e) {
@@ -44,6 +92,8 @@ async function handleLogin(e) {
   const password = document.getElementById('authPassword').value;
   const errorEl = document.getElementById('loginError');
   errorEl.style.display = 'none';
+
+  await discoverApiBase();
 
   try {
     const res = await fetch(`${API_BASE}/auth/login`, {
@@ -107,38 +157,50 @@ async function fetchMetrics() {
 
     document.getElementById('metricLeads').textContent = data.totalLeads || 0;
     document.getElementById('metricHotLeads').textContent = data.hotLeads || 0;
-    document.getElementById('metricWaClicks').textContent = data.waClicks || 0;
+    const opensEl = document.getElementById('metricOpens');
+    if(opensEl) opensEl.textContent = data.totalOpens || 0;
     document.getElementById('metricEmailsSent').textContent = data.emailsSent || 0;
     document.getElementById('metricReplies').textContent = data.replies || 0;
     document.getElementById('metricPipeline').textContent = `$${(data.pipelineValue || 0).toLocaleString()}`;
 
-    // Update Bot Status Pill
+    // Update Bot Status Pill & Sourcing Toggle
     const pill = document.getElementById('botStatusPill');
     const text = document.getElementById('botStatusText');
+    const sPill = document.getElementById('sourcingAutomationToggle');
+    const sText = document.getElementById('sourcingAutomationText');
+
+    currentBotActive = !!data.botActive;
     if (data.botActive) {
-      pill.className = 'status-pill online';
-      text.textContent = '🟢 BOT ONLINE';
+      if (pill) pill.className = 'status-pill online';
+      if (text) text.textContent = '🟢 AUTOMATION: ON';
+      if (sPill) sPill.className = 'status-pill online';
+      if (sText) sText.textContent = '🟢 AUTOMATION: ON';
     } else {
-      pill.className = 'status-pill paused';
-      text.textContent = '🔴 BOT PAUSED';
+      if (pill) pill.className = 'status-pill paused';
+      if (text) text.textContent = '🔴 AUTOMATION: OFF';
+      if (sPill) sPill.className = 'status-pill paused';
+      if (sText) sText.textContent = '🔴 AUTOMATION: OFF';
     }
   } catch (_) { }
 }
 
 async function toggleBotStatus() {
-  const currentText = document.getElementById('botStatusText').textContent;
-  const isOnline = currentText.includes('ONLINE');
-  const newStatus = !isOnline;
+  const newActive = !currentBotActive;
 
   try {
-    await fetch(`${API_BASE}/bot/status`, {
+    const res = await fetch(`${API_BASE}/bot/status`, {
       method: 'POST',
       headers: apiHeaders(),
-      body: JSON.stringify({ active: newStatus })
+      body: JSON.stringify({ active: newActive })
     });
-    fetchMetrics();
+    const data = await res.json();
+    if (data.success) {
+      currentBotActive = !!data.botActive;
+      fetchMetrics();
+      fetchLogs();
+    }
   } catch (err) {
-    alert('Failed to toggle bot status.');
+    alert('Failed to toggle Master Automation status.');
   }
 }
 
@@ -164,62 +226,186 @@ async function loadLeads() {
     const res = await fetch(`${API_BASE}/leads?${query.toString()}`, { headers: apiHeaders() });
     const data = await res.json();
     currentLeads = data.leads || [];
-    renderLeadsTable(currentLeads);
+    renderLeadsKanban(currentLeads);
   } catch (err) {
     console.error('Failed to load leads:', err);
   }
 }
 
-function renderLeadsTable(leads) {
-  const tbody = document.getElementById('leadsTableBody');
+function renderLeadsKanban(leads) {
+  const container = document.getElementById('leadsKanbanBoard');
   if (!leads || leads.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 24px; color: var(--text-muted);">No prospective leads found. Launch a scraper in Tab 2 or click "+ Add Manual Prospect".</td></tr>`;
+    container.innerHTML = `<div style="padding: 24px; color: var(--text-muted); width: 100%; text-align: center;">No prospective leads found. Launch a scraper or add manually.</div>`;
+    renderAnalyticsCharts([]);
     return;
   }
 
-  tbody.innerHTML = leads.map(l => {
-    let badgeClass = 'badge-cold';
-    if (l.tier === 'Hot') badgeClass = 'badge-hot';
-    else if (l.tier === 'Warm') badgeClass = 'badge-warm';
+  const columns = {
+    'Discovered': { title: 'Discovered', leads: [] },
+    'Pitched': { title: 'Pitched (Touch 1)', leads: [] },
+    'Follow-Up': { title: 'Follow-Up Sequence', leads: [] },
+    'Opened': { title: 'Opened / Reading', leads: [] },
+    'Replied': { title: 'Replied / Hot', leads: [] },
+    'Opted Out': { title: 'Opted Out', leads: [] }
+  };
 
-    const waEncodedMsg = encodeURIComponent(l.whatsappIntro || `Hi ${l.name}, reached out from Fusion Engine Technology (${l.website || 'fusionengine.in'}). We build custom ${l.category || 'software'} platforms.`);
-    const waLink = `https://wa.me/916369884331?text=${waEncodedMsg}`;
+  leads.forEach(l => {
+    let statusCol = l.status || 'Discovered';
+    if (statusCol.startsWith('Follow-Up')) statusCol = 'Follow-Up';
+    if (!columns[statusCol]) statusCol = 'Discovered'; // Fallback
+    columns[statusCol].leads.push(l);
+  });
 
-    const discoveredTime = l.createdAt
-      ? new Date(l.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-      : 'Recently';
+  let html = '';
+  for (const [key, col] of Object.entries(columns)) {
+    // Skip empty columns except the main ones
+    if (col.leads.length === 0 && key === 'Opted Out') continue;
+    
+    html += `<div class="kanban-col">
+      <div class="kanban-col-header">
+        <span>${col.title}</span>
+        <span class="badge" style="background:var(--bg-card-solid); color:var(--text-main);">${col.leads.length}</span>
+      </div>
+      <div class="kanban-col-body">`;
+      
+    col.leads.forEach(l => {
+      let badgeClass = 'badge-cold';
+      if (l.tier === 'Hot') badgeClass = 'badge-hot';
+      else if (l.tier === 'Warm') badgeClass = 'badge-warm';
 
-    return `
-      <tr>
-        <td>
-          <strong>${escapeHtml(l.name)}</strong><br>
-          <a href="${l.website}" target="_blank" style="font-size:12px; color:var(--accent-blue); text-decoration:none;">${l.website || 'No website'}</a>
-        </td>
-        <td><span class="badge badge-category">${l.category}</span></td>
-        <td>${l.region}</td>
-        <td>
-          <span class="badge ${badgeClass}">${l.score}% ${l.tier}</span>
-        </td>
-        <td style="font-size:12px;">
-          ${l.email ? `<div>✉️ ${escapeHtml(l.email)}</div>` : '<div style="color:var(--text-light)">No Email</div>'}
-          ${l.phone ? `<div>📞 ${escapeHtml(l.phone)}</div>` : ''}
-        </td>
-        <td style="font-size:12px; color:var(--text-muted); white-space:nowrap;">
-          🕒 ${discoveredTime}
-        </td>
-        <td>
-          <span class="badge" style="background:#E2E8F0; color:#334155;">${l.status || 'Discovered'}</span>
-        </td>
-        <td>
-          <div style="display:flex; gap:6px; flex-wrap:wrap;">
-            <a href="${waLink}" target="_blank" onclick="trackWaClick('${l.id}')" class="btn btn-sm btn-success" style="text-decoration:none;">💬 wa.me</a>
-            <button class="btn btn-sm btn-secondary" onclick="openPitchModal('${l.id}')">✉️ Pitch</button>
-            <button class="btn btn-sm ${l.optedOut ? 'btn-danger' : 'btn-secondary'}" onclick="toggleOptOut('${l.id}')">${l.optedOut ? 'Unblock' : 'Opt-Out'}</button>
+      const waEncodedMsg = encodeURIComponent(l.whatsappIntro || `Hi ${l.name}, reached out from Fusion Engine Technology (${l.website || 'fusionengine.in'}). We build custom ${l.category || 'software'} platforms.`);
+      const waLink = `https://wa.me/916369884331?text=${waEncodedMsg}`;
+
+      const discoveredTime = l.createdAt
+        ? new Date(l.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric' })
+        : 'Recently';
+
+      html += `
+        <div class="kanban-card">
+          <h4>${escapeHtml(l.name)}</h4>
+          <a href="${l.website}" target="_blank" class="domain">${l.website || 'No website'}</a>
+          <div class="details">
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+              <span class="badge ${badgeClass}">${l.score}% ${l.tier}</span>
+              <span class="badge badge-category">${l.category}</span>
+            </div>
+            <div style="color: var(--text-muted); font-size: 13px;">
+              ${l.email ? `✉️ ${escapeHtml(l.email)}` : 'No Email'}
+            </div>
+            ${l.openCount ? `<div style="color:var(--status-green); margin-top:4px; font-weight:600;">👁️ Opened ${l.openCount}x</div>` : ''}
           </div>
-        </td>
-      </tr>
-    `;
-  }).join('');
+          <div class="actions">
+            <button class="btn btn-sm btn-success" style="flex:1;" onclick="handleWaDispatch('${l.id}')">💬 WA</button>
+            <button class="btn btn-sm btn-secondary" style="flex:1;" onclick="openPitchModal('${l.id}')">✉️ Pitch</button>
+            <button class="btn btn-sm ${l.optedOut ? 'btn-danger' : 'btn-secondary'}" style="flex:1;" onclick="toggleOptOut('${l.id}')">${l.optedOut ? 'Unblock' : 'Block'}</button>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += `</div></div>`;
+  }
+  
+  container.innerHTML = html;
+  
+  // Render advanced charts
+  renderAnalyticsCharts(leads);
+}
+
+// --- ANALYTICS CHARTS (PHASE 3) ---
+let funnelChartInstance = null;
+let statusChartInstance = null;
+
+function renderAnalyticsCharts(leads) {
+  if (typeof Chart === 'undefined') return; // Wait for CDN
+
+  const ctxFunnel = document.getElementById('funnelChart');
+  const ctxStatus = document.getElementById('statusChart');
+  
+  if (!ctxFunnel || !ctxStatus) return;
+
+  // Aggregate Data
+  const stats = {
+    discovered: leads.length,
+    pitched: leads.filter(l => l.status !== 'Discovered' && !l.optedOut).length,
+    followUp: leads.filter(l => l.touchCount > 1 && !l.optedOut).length,
+    engaged: leads.filter(l => ['Opened', 'Replied'].includes(l.status)).length
+  };
+
+  const statusCounts = {
+    'Discovered': leads.filter(l => l.status === 'Discovered').length,
+    'Pitched': leads.filter(l => l.status === 'Pitched' || l.status === 'Follow-Up').length,
+    'Opened': leads.filter(l => l.status === 'Opened').length,
+    'Replied': leads.filter(l => l.status === 'Replied').length,
+    'Opted Out': leads.filter(l => l.optedOut).length
+  };
+
+  // Funnel Chart
+  if (funnelChartInstance) funnelChartInstance.destroy();
+  funnelChartInstance = new Chart(ctxFunnel, {
+    type: 'bar',
+    data: {
+      labels: ['Discovered', 'Pitched (Touch 1)', 'Follow-Up', 'Engaged (Opened/Replied)'],
+      datasets: [{
+        label: 'Lead Pipeline Funnel',
+        data: [stats.discovered, stats.pitched, stats.followUp, stats.engaged],
+        backgroundColor: [
+          'rgba(59, 130, 246, 0.7)',
+          'rgba(139, 92, 246, 0.7)',
+          'rgba(245, 158, 11, 0.7)',
+          'rgba(16, 185, 129, 0.7)'
+        ],
+        borderColor: [
+          'rgb(59, 130, 246)',
+          'rgb(139, 92, 246)',
+          'rgb(245, 158, 11)',
+          'rgb(16, 185, 129)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Acquisition Pipeline Drop-off', color: '#475569' }
+      },
+      scales: {
+        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#475569' } },
+        x: { grid: { display: false }, ticks: { color: '#475569' } }
+      }
+    }
+  });
+
+  // Status Distribution Doughnut
+  if (statusChartInstance) statusChartInstance.destroy();
+  statusChartInstance = new Chart(ctxStatus, {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(statusCounts),
+      datasets: [{
+        data: Object.values(statusCounts),
+        backgroundColor: [
+          'rgba(148, 163, 184, 0.9)', // Discovered
+          'rgba(59, 130, 246, 0.9)', // Pitched
+          'rgba(245, 158, 11, 0.9)', // Opened
+          'rgba(16, 185, 129, 0.9)', // Replied
+          'rgba(239, 68, 68, 0.9)'   // Opted Out
+        ],
+        borderColor: '#FFFFFF',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right', labels: { color: '#475569' } },
+        title: { display: true, text: 'Total CRM Status Distribution', color: '#475569' }
+      }
+    }
+  });
 }
 
 async function trackWaClick(leadId) {
@@ -368,7 +554,93 @@ async function sendPitchEmail() {
   }
 }
 
+async function handleWaDispatch(leadId) {
+  const lead = currentLeads.find(l => l.id === leadId);
+  if (!lead) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/leads/${leadId}/whatsapp/send`, {
+      method: 'POST',
+      headers: apiHeaders()
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      if (data.directSent) {
+        alert(`✅ WhatsApp message sent directly to ${lead.name} (${data.phone || lead.phone || 'Lead'})!`);
+      } else if (data.url) {
+        window.open(data.url, '_blank');
+        alert(`ℹ️ WhatsApp bot offline/unconnected. Opened Click-to-Chat fallback link for ${lead.name}.`);
+      } else {
+        alert(`WhatsApp action completed for ${lead.name}.`);
+      }
+      loadLeads();
+      fetchMetrics();
+    } else {
+      alert(`WhatsApp Dispatch Failed: ${data.reason || 'Lead may be opted out or missing phone.'}`);
+    }
+  } catch (err) {
+    alert('Failed to process WhatsApp request.');
+  }
+}
+
+async function sendPitchWhatsApp() {
+  if (!activePitchLeadId) return;
+  const customMessage = document.getElementById('pWaIntro').value;
+  const btn = document.getElementById('btnDispatchWa');
+  const lead = currentLeads.find(l => l.id === activePitchLeadId);
+
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/leads/${activePitchLeadId}/whatsapp/send`, {
+      method: 'POST',
+      headers: apiHeaders(),
+      body: JSON.stringify({ customMessage })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      if (data.directSent) {
+        alert(`✅ WhatsApp pitch sent directly to ${lead ? lead.name : 'Lead'} (${data.phone})!`);
+      } else if (data.url) {
+        window.open(data.url, '_blank');
+        alert(`ℹ️ WhatsApp bot offline. Opened Click-to-Chat fallback link.`);
+      }
+      closePitchModal();
+      loadLeads();
+      fetchMetrics();
+    } else {
+      alert(`WhatsApp Send Failed: ${data.reason || 'Lead opted out or error occurred.'}`);
+    }
+  } catch (err) {
+    alert('Failed to dispatch WhatsApp message.');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = '💬 Dispatch WhatsApp Direct';
+    }
+  }
+}
+
 // --- TAB 2: SOURCING & LIVE LOGS ---
+async function triggerAutoSweep() {
+  try {
+    const res = await fetch(`${API_BASE}/scrape/auto-all`, {
+      method: 'POST',
+      headers: apiHeaders()
+    });
+    const data = await res.json();
+    alert(data.message || 'Launched full autonomous discovery sweep across all locations & categories.');
+    fetchLogs();
+  } catch (err) {
+    alert('Failed to launch autonomous sweep.');
+  }
+}
+
 async function triggerScraper() {
   const category = document.getElementById('scrapeCategory').value;
   const region = document.getElementById('scrapeRegion').value;
@@ -487,7 +759,7 @@ async function generateSOWProposal(e) {
   preview.textContent = '⚡ Architecting Scope of Work Proposal via Gemini AI... Please wait...';
 
   try {
-    const res = await fetch(`${API_BASE}/proposals/generate`, {
+    const res = await fetch(`${API_BASE}/generate-proposal`, {
       method: 'POST',
       headers: apiHeaders(),
       body: JSON.stringify({ clientName, projectScope, targetTech: techStack })

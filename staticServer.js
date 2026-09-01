@@ -30,6 +30,11 @@ const server = http.createServer((req, res) => {
     safePath = '/index.html';
   }
 
+  if (req.url.startsWith('/api/') || req.url === '/api') {
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ error: 'API endpoints are served by node server.js on port 3000.' }));
+  }
+
   const filePath = path.join(PUBLIC_DIR, safePath);
   const ext = path.extname(filePath).toLowerCase();
   const contentType = MIME_TYPES[ext] || 'application/octet-stream';

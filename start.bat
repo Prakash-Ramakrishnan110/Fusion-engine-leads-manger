@@ -7,11 +7,13 @@ echo          FUSION ENGINE TECHNOLOGY — CLIENT ACQUISITION ENGINE
 echo ======================================================================
 echo.
 
-if not exist node_modules (
-    echo [INFO] First time startup detected. Installing dependencies...
-    call npm install
-    echo.
-)
+if exist node_modules goto skipMainInstall
+echo [INFO] First time startup detected. Installing dependencies...
+call npm install
+echo.
+:skipMainInstall
+
+
 
 echo [1/3] Starting Express API Server on http://127.0.0.1:3000 ...
 start "Fusion Engine API Server" cmd /k "node server.js"

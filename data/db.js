@@ -30,14 +30,26 @@ function enqueueWrite(task) {
  */
 function safeWriteJSON(filePath, data) {
   const tempPath = `${filePath}.${Date.now()}.${Math.random().toString(36).substring(2, 7)}.tmp`;
+  const content = JSON.stringify(data, null, 2);
   try {
-    fs.writeFileSync(tempPath, JSON.stringify(data, null, 2), 'utf8');
-    fs.renameSync(tempPath, filePath);
+    fs.writeFileSync(tempPath, content, 'utf8');
+    try {
+      fs.renameSync(tempPath, filePath);
+    } catch (renameErr) {
+      if (renameErr.code === 'EPERM' || renameErr.code === 'EBUSY') {
+        fs.writeFileSync(filePath, content, 'utf8');
+        try { fs.unlinkSync(tempPath); } catch (_) {}
+      } else {
+        throw renameErr;
+      }
+    }
   } catch (err) {
     if (fs.existsSync(tempPath)) {
       try { fs.unlinkSync(tempPath); } catch (_) {}
     }
-    throw err;
+    try {
+      fs.writeFileSync(filePath, content, 'utf8');
+    } catch (_) {}
   }
 }
 
@@ -152,6 +164,7 @@ function appendSystemLog(level, message, metadata = {}) {
 const DEFAULT_SETTINGS = {
   botActive: true,
   coldEmailEnabled: true,
+  emailLimitHitAt: null,
   scraperRateLimit: 60, // requests per hour
   promptTemplate: '',
   smtpVerified: false,
@@ -172,6 +185,12 @@ function updateSettings(updates) {
   });
 }
 
+function saveMessageLogs(logs) {
+  return enqueueWrite(() => {
+    safeWriteJSON(MESSAGE_LOG_FILE, logs);
+  });
+}
+
 module.exports = {
   getLeads,
   saveLeads,
@@ -180,6 +199,7 @@ module.exports = {
   addOptOut,
   removeOptOut,
   getMessageLogs,
+  saveMessageLogs,
   logMessage,
   getSystemLogs,
   appendSystemLog,

@@ -1,1 +1,76 @@
-[]
+[
+  {
+    "id": "msg_1788279836625_x5im",
+    "timestamp": "2026-09-01T16:23:56.610Z",
+    "type": "WHATSAPP_DISPATCH_PENDING",
+    "sender": "System",
+    "receiver": "+919876543210",
+    "content": "Hello from Fusion Engine"
+  },
+  {
+    "id": "msg_1788273361632_4m03",
+    "timestamp": "2026-09-01T14:36:01.624Z",
+    "type": "WHATSAPP_DISPATCH_PENDING",
+    "sender": "System",
+    "receiver": "+919876543210",
+    "content": "Hello from Fusion Engine"
+  },
+  {
+    "id": "msg_1788273139582_8z4h",
+    "timestamp": "2026-09-01T14:32:19.573Z",
+    "type": "WHATSAPP_DISPATCH_PENDING",
+    "sender": "System",
+    "receiver": "+919876543210",
+    "content": "Hello from Fusion Engine"
+  },
+  {
+    "id": "msg_1788273063044_b273",
+    "timestamp": "2026-09-01T14:31:03.045Z",
+    "type": "EMAIL_DISPATCH",
+    "recipient": "privacy@github.com",
+    "leadId": "lead_1788273047375_uyulu",
+    "leadName": "Sachin Lokesh",
+    "subject": "Engineering Custom Business Systems for Sachin Lokesh",
+    "messageId": "<73ac721e-d181-510f-ef76-77df73e90fa6@gmail.com>"
+  },
+  {
+    "id": "msg_1788273043782_3hk8",
+    "timestamp": "2026-09-01T14:30:43.782Z",
+    "type": "EMAIL_DISPATCH",
+    "recipient": "enquiry@qpos.co.in",
+    "leadId": "lead_1788273013547_qwwbu",
+    "leadName": "QPOS India",
+    "subject": "Engineering Custom Business Systems for QPOS India",
+    "messageId": "<91ae48e8-5006-2bf0-a6d5-bc00b85ab496@gmail.com>"
+  },
+  {
+    "id": "msg_1788273009178_2lay",
+    "timestamp": "2026-09-01T14:30:09.178Z",
+    "type": "EMAIL_DISPATCH",
+    "recipient": "contact@dcmindia.com",
+    "leadId": "lead_1788272993114_5icoo",
+    "leadName": "DCM India",
+    "subject": "Streamlining DCM India's Digital Workflows (India)",
+    "messageId": "<230befde-5269-1477-5599-685f1ec6d45f@gmail.com>"
+  },
+  {
+    "id": "msg_1788272986314_u3tg",
+    "timestamp": "2026-09-01T14:29:46.314Z",
+    "type": "EMAIL_DISPATCH",
+    "recipient": "contact@linkedin.com",
+    "leadId": "lead_1788272971533_gjlzx",
+    "leadName": "Rakesh Gombi",
+    "subject": "Tailored App Development & Automation for Rakesh Gombi",
+    "messageId": "<dd0fd6f7-8e98-312d-bc5f-92ca01c3c88b@gmail.com>"
+  },
+  {
+    "id": "msg_1788272969441_f3zl",
+    "timestamp": "2026-09-01T14:29:29.441Z",
+    "type": "EMAIL_DISPATCH",
+    "recipient": "contact@raunakritesh.com",
+    "leadId": "lead_1788272936826_2cnbq",
+    "leadName": "Raunak Ritesh",
+    "subject": "Streamlining Raunak Ritesh's Digital Workflows (India)",
+    "messageId": "<d10a39cc-785c-af8e-b33e-9f6ff1cee778@gmail.com>"
+  }
+]

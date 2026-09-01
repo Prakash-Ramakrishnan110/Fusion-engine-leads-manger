@@ -59,7 +59,7 @@ async function runTests() {
   // Initially allowed
   const waBefore = waDisp.generateClickToChatLink(leadObj);
   assert.strictEqual(waBefore.allowed, true, 'Link generation should be allowed before opt-out');
-  assert.ok(waBefore.url.includes('https://wa.me/916369884331'), 'wa.me target number correct');
+  assert.ok(waBefore.url.includes('https://wa.me/971501234567'), 'wa.me target client phone number correct');
   console.log(`  -> Generated WA Click-to-Chat Link: ${waBefore.url}`);
 
   // Register Opt-Out
@@ -102,8 +102,22 @@ async function runTests() {
   await db.saveLeads(cleanedLeads);
   console.log('  ✅ Database Mutex Storage Test Passed.\n');
 
+  // Test 6: Direct WhatsApp Dispatcher & Fallback
+  console.log('[Test 6] Testing Direct WhatsApp Dispatcher & Fallback...');
+  const dispatchLead = {
+    name: 'Tech Innovators',
+    phone: '+919876543210',
+    email: 'contact@techinnovators.io',
+    category: 'Apps'
+  };
+  const dispatchRes = await waDisp.dispatchWhatsAppMessage(dispatchLead, 'Hello from Fusion Engine');
+  assert.strictEqual(dispatchRes.allowed, true, 'Dispatch should be allowed for valid lead');
+  assert.strictEqual(typeof dispatchRes.directSent, 'boolean', 'directSent flag present');
+  console.log(`  -> Direct Dispatch Result (directSent=${dispatchRes.directSent}): ${dispatchRes.directSent ? 'Sent directly' : 'Fallback URL: ' + dispatchRes.url}`);
+  console.log('  ✅ Direct WhatsApp Dispatcher Test Passed.\n');
+
   console.log('====================================================');
-  console.log(' ALL 5 SYSTEM VERIFICATION TESTS PASSED SUCCESSFULLY! ');
+  console.log(' ALL 6 SYSTEM VERIFICATION TESTS PASSED SUCCESSFULLY! ');
   console.log('====================================================');
 }
 

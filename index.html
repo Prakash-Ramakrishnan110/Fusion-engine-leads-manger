@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fusion Engine Technology — 24/7 Client Acquisition Engine</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -16,7 +17,7 @@
       <p>Internal Ops Dashboard Authentication</p>
       <form id="loginForm" onsubmit="handleLogin(event)">
         <div class="form-group" style="margin-bottom: 20px;">
-          <input type="password" id="authPassword" class="input-control" placeholder="Enter Dashboard Security PIN" required style="text-align: center; font-size: 16px;">
+          <input type="password" id="authPassword" class="input-control" value="fusion2026" placeholder="Enter Dashboard Security PIN" required style="text-align: center; font-size: 16px;">
         </div>
         <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Unlock Dashboard</button>
         <p id="loginError" style="color: var(--status-red); font-size: 13px; margin-top: 12px; display: none;"></p>
@@ -37,9 +38,9 @@
         </div>
       </div>
       <div class="header-actions">
-        <div id="botStatusPill" class="status-pill online" onclick="toggleBotStatus()">
+        <div id="botStatusPill" class="status-pill online" onclick="toggleBotStatus()" title="Click to Toggle Master Automation ON / OFF">
           <span class="status-dot"></span>
-          <span id="botStatusText">🟢 BOT ONLINE</span>
+          <span id="botStatusText">🟢 AUTOMATION: ON</span>
         </div>
         <button class="btn btn-secondary btn-sm" onclick="logout()">Lock Session</button>
       </div>
@@ -67,11 +68,11 @@
 
       <div class="glass-card metric-card">
         <div class="metric-header">
-          <span>WA Click-throughs</span>
-          <div class="metric-icon green">💬</div>
+          <span>Email Opens</span>
+          <div class="metric-icon green">👁️</div>
         </div>
-        <div class="metric-value" id="metricWaClicks">0</div>
-        <div class="metric-sub">wa.me link generation touches</div>
+        <div class="metric-value" id="metricOpens">0</div>
+        <div class="metric-sub">Pitches read by prospects</div>
       </div>
 
       <div class="glass-card metric-card">
@@ -117,6 +118,7 @@
         <div class="filter-group">
           <select id="filterCategory" class="select-control" onchange="loadLeads()">
             <option value="ALL">All Categories</option>
+            <option value="CustomApps">Custom Requirement Apps</option>
             <option value="LMS">LMS & Education</option>
             <option value="ERP">ERP & Internal Tools</option>
             <option value="Apps">Web & Mobile Apps</option>
@@ -140,59 +142,86 @@
         </div>
       </div>
 
-      <div class="table-wrapper glass-card">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Lead Name & Domain</th>
-              <th>Category</th>
-              <th>Region</th>
-              <th>Score</th>
-              <th>Contact Info</th>
-              <th>📅 Discovered At</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="leadsTableBody">
-            <!-- Rendered dynamically -->
-          </tbody>
-        </table>
+      <!-- ANALYTICS CHARTS SECTION -->
+      <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
+        <h3 style="margin-bottom: 16px; color: var(--text-main);">Acquisition Analytics & Conversion Funnel</h3>
+        <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 300px; background: #FFFFFF; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); padding: 16px; border-radius: 8px;">
+            <canvas id="funnelChart"></canvas>
+          </div>
+          <div style="flex: 1; min-width: 300px; background: #FFFFFF; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); padding: 16px; border-radius: 8px;">
+            <canvas id="statusChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="kanban-board" id="leadsKanbanBoard">
+        <!-- Columns rendered dynamically -->
       </div>
     </div>
 
     <!-- TAB 2: SOURCING & AI EXECUTION -->
     <div id="sourcingTab" class="tab-content">
       <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
-        <h3 style="margin-bottom: 16px; font-size: 18px;">Automated Sourcing & AI Pitch Controls</h3>
-        <div class="form-grid" style="margin-bottom: 20px;">
-          <div class="form-group">
-            <label>Target Service Category</label>
-            <select id="scrapeCategory" class="select-control">
-              <option value="LMS">LMS Platforms & Education</option>
-              <option value="ERP">Custom ERPs & Workflow Tools</option>
-              <option value="Apps">SaaS Web & Mobile Apps</option>
-              <option value="AI">AI Automation & Chatbots</option>
-              <option value="Firmware">Firmware & IoT Engineering</option>
-            </select>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h3 style="margin: 0; font-size: 18px;">Autonomous Sourcing & AI Execution</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin: 4px 0 0 0;">
+              When Automation is <strong>ON</strong>, the system automatically finds leads across all locations and categories.
+            </p>
           </div>
-
-          <div class="form-group">
-            <label>Target Region</label>
-            <select id="scrapeRegion" class="select-control">
-              <option value="India">India (Bangalore, Mumbai, Delhi, Chennai, Hyd)</option>
-              <option value="USA">USA (California, New York, Texas, Florida)</option>
-              <option value="Europe">Europe (UK, Germany, Netherlands)</option>
-              <option value="Middle East">Middle East (Dubai, UAE, Saudi Arabia)</option>
-              <option value="Global">Global / Remote First</option>
-            </select>
+          <div id="sourcingAutomationToggle" class="status-pill online" onclick="toggleBotStatus()" style="cursor: pointer;" title="Toggle Master Automation ON / OFF">
+            <span class="status-dot"></span>
+            <span id="sourcingAutomationText">🟢 AUTOMATION: ON</span>
           </div>
         </div>
 
-        <div style="display: flex; gap: 12px;">
-          <button class="btn btn-primary" onclick="triggerScraper()">⚡ Launch Scraper & AI Pitcher</button>
+        <div style="background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.2); border-radius: 8px; padding: 14px 16px; margin-bottom: 20px;">
+          <strong style="color: var(--accent-blue); font-size: 14px;">⚡ Autonomous Hands-Free Lead Discovery</strong>
+          <p style="font-size: 13px; color: var(--text-muted); margin: 4px 0 0 0;">
+            Location and category selection happens automatically. Click below to run an instant sweep across all locations and categories, or keep Automation ON for background execution.
+          </p>
+        </div>
+
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;">
+          <button class="btn btn-primary" onclick="triggerAutoSweep()" style="font-weight: 600; padding: 12px 20px;">
+            ⚡ Run Auto-Discovery Sweep (All Locations & Categories)
+          </button>
           <button class="btn btn-secondary" onclick="fetchLogs()">🔄 Refresh Live Logs</button>
         </div>
+
+        <details style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 16px;">
+          <summary style="cursor: pointer; font-size: 13px; color: var(--text-muted); font-weight: 500;">
+            ⚙️ Optional: Manual Single Target Category & Region Override
+          </summary>
+          <div class="form-grid" style="margin-top: 16px; margin-bottom: 16px;">
+            <div class="form-group">
+              <label>Target Service Category</label>
+              <select id="scrapeCategory" class="select-control">
+                <option value="ALL">ALL Categories (Auto-Cycle)</option>
+                <option value="CustomApps">Custom Business Apps (Tailored Requirements)</option>
+                <option value="LMS">LMS Platforms & Education</option>
+                <option value="ERP">Custom ERPs & Workflow Tools</option>
+                <option value="Apps">SaaS Web & Mobile Apps</option>
+                <option value="AI">AI Automation & Chatbots</option>
+                <option value="Firmware">Firmware & IoT Engineering</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Target Region</label>
+              <select id="scrapeRegion" class="select-control">
+                <option value="ALL">ALL Regions (Auto-Cycle)</option>
+                <option value="India">India (Bangalore, Mumbai, Delhi, Chennai, Hyd)</option>
+                <option value="USA">USA (California, New York, Texas, Florida)</option>
+                <option value="Europe">Europe (UK, Germany, Netherlands)</option>
+                <option value="Middle East">Middle East (Dubai, UAE, Saudi Arabia)</option>
+                <option value="Global">Global / Remote First</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="triggerScraper()">Launch Single Override Target Scraper</button>
+        </details>
       </div>
 
       <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
@@ -451,13 +480,14 @@
         </div>
 
         <div class="form-group" style="margin-bottom: 20px;">
-          <label>WhatsApp Intro (wa.me pre-filled message)</label>
-          <input type="text" id="pWaIntro" class="input-control" readonly>
+          <label>WhatsApp Intro (Direct message when connected)</label>
+          <input type="text" id="pWaIntro" class="input-control">
         </div>
       </div>
 
-      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+      <div style="display: flex; gap: 12px; justify-content: flex-end; flex-wrap: wrap;">
         <button class="btn btn-secondary" onclick="closePitchModal()">Cancel</button>
+        <button class="btn btn-success" id="btnDispatchWa" onclick="sendPitchWhatsApp()">💬 Dispatch WhatsApp Direct</button>
         <button class="btn btn-primary" id="btnDispatchEmail" onclick="sendPitchEmail()">✉️ Dispatch Email Now</button>
       </div>
     </div>

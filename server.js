@@ -10,21 +10,22 @@ const express = require('express');
 const cors = require('cors');
 const cron = require('node-cron');
 
-const { BRAND } = require('./config');
+const { BRAND, FOLLOWUP_SCHEDULE } = require('./config');
 const {
   getLeads, saveLeads, saveLead,
   getOptOuts, addOptOut, removeOptOut,
-  getMessageLogs, getSystemLogs, appendSystemLog,
+  getMessageLogs, saveMessageLogs, getSystemLogs, appendSystemLog,
   getSettings, updateSettings
 } = require('./data/db');
 
-const { runLeadScraper } = require('./src/scrapers/leadScraper');
+const { runLeadScraper, runAutonomousSweep } = require('./src/scrapers/leadScraper');
 const { scoreLead } = require('./src/ml/leadScorer');
-const { generatePitchForLead, generateProposal } = require('./src/ai/auditorAndWriter');
-const { generateClickToChatLink } = require('./src/outreach/whatsappDispatcher');
-const { sendOutreachEmail, verifyUnsubscribeToken } = require('./src/outreach/emailDispatcher');
+const { generatePitchForLead, generateProposal, generateFollowUpForLead } = require('./src/ai/auditorAndWriter');
+const { generateClickToChatLink, dispatchWhatsAppMessage } = require('./src/outreach/whatsappDispatcher');
+const { sendOutreachEmail, verifyUnsubscribeToken, checkAndAutoResumeEmailLimit } = require('./src/outreach/emailDispatcher');
 const { registerOptOut, unregisterOptOut } = require('./src/outreach/optOutManager');
-const { initializeWhatsAppBot, processInboundReply } = require('./src/bot/replyHandler');
+const { initializeWhatsAppBot, processInboundReply, sendOutboundWhatsApp } = require('./src/bot/replyHandler');
+const { initializeImapListener } = require('./src/bot/emailListener');
 
 const app = express();
 const HOST = process.env.HOST || '0.0.0.0';
@@ -74,6 +75,32 @@ app.get('/api/unsubscribe', async (req, res) => {
   `);
 });
 
+app.get('/api/track/:id', async (req, res) => {
+  const { id } = req.params;
+  const leads = getLeads();
+  const lead = leads.find(l => l.id === id);
+
+  if (lead) {
+    lead.openCount = (lead.openCount || 0) + 1;
+    lead.openedAt = new Date().toISOString();
+    // Only update status to Opened if they haven't replied or already booked
+    if (lead.status === 'Pitched' || lead.status.startsWith('Follow-Up')) {
+      lead.status = 'Opened';
+    }
+    await saveLead(lead);
+    appendSystemLog('INFO', `Email tracking pixel fired for lead: ${lead.email} (Opens: ${lead.openCount})`);
+  }
+
+  // 1x1 transparent GIF Base64
+  const transparentPixel = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
+  res.writeHead(200, {
+    'Content-Type': 'image/gif',
+    'Content-Length': transparentPixel.length,
+    'Cache-Control': 'no-store, no-cache, must-revalidate, private'
+  });
+  res.end(transparentPixel);
+});
+
 // --- 2. AUTHENTICATION MIDDLEWARE FOR PROTECTED /api/* ROUTES ---
 app.use('/api', (req, res, next) => {
   const token = req.headers['x-dashboard-auth'] || req.query.auth;
@@ -93,6 +120,7 @@ app.get('/api/stats', (req, res) => {
   const hotLeads = leads.filter(l => l.score >= 85).length;
   const emailsSent = logs.filter(m => m.type === 'EMAIL_DISPATCH').length;
   const replies = logs.filter(m => m.type && m.type.includes('INBOUND_REPLY')).length;
+  const totalOpens = leads.reduce((sum, l) => sum + (l.openCount || 0), 0);
   const waClicks = leads.filter(l => l.waClickCount && l.waClickCount > 0).length;
 
   const pipelineValue = leads
@@ -103,6 +131,7 @@ app.get('/api/stats', (req, res) => {
     botActive: settings.botActive,
     totalLeads,
     hotLeads,
+    totalOpens,
     waClicks,
     emailsSent,
     replies,
@@ -217,6 +246,34 @@ app.get('/api/leads/:id/whatsapp', (req, res) => {
   res.json(waResult);
 });
 
+app.post('/api/leads/:id/whatsapp/send', async (req, res) => {
+  const { id } = req.params;
+  const { customMessage } = req.body || {};
+  const leads = getLeads();
+  const lead = leads.find(l => l.id === id);
+
+  if (!lead) return res.status(404).json({ error: 'Lead not found.' });
+
+  const result = await dispatchWhatsAppMessage(lead, customMessage);
+
+  if (result.success) {
+    lead.waClickCount = (lead.waClickCount || 0) + 1;
+    if (result.directSent) {
+      lead.touchCount = (lead.touchCount || 0) + 1;
+      lead.lastTouchAt = new Date().toISOString();
+      if (lead.status === 'Discovered') {
+        lead.status = 'Pitched';
+      }
+      appendSystemLog('INFO', `Direct WhatsApp message dispatched to lead "${lead.name}" (${lead.phone})`);
+    } else {
+      appendSystemLog('INFO', `Click-to-chat WhatsApp link generated for lead "${lead.name}" (WhatsApp bot offline/manual mode)`);
+    }
+    await saveLead(lead);
+  }
+
+  res.json(result);
+});
+
 app.post('/api/leads/clear', async (req, res) => {
   await saveLeads([]);
   await saveMessageLogs([]);
@@ -252,11 +309,25 @@ app.post('/api/leads/:id/optout', async (req, res) => {
 app.post('/api/scrape/trigger', async (req, res) => {
   const { category, region } = req.body;
   
+  if (category === 'ALL' || region === 'ALL' || (!category && !region)) {
+    runAutonomousSweep().catch(err => {
+      appendSystemLog('ERROR', `Autonomous sweep error: ${err.message}`);
+    });
+    return res.json({ success: true, message: 'Autonomous multi-location & category scraper launched. Watch Live Terminal Logs.' });
+  }
+
   runLeadScraper(category || 'LMS', region || 'India').catch(err => {
     appendSystemLog('ERROR', `Scraper run error: ${err.message}`);
   });
 
   res.json({ success: true, message: `Scraper launched for ${category} in ${region}. Watch Live Terminal Logs.` });
+});
+
+app.post('/api/scrape/auto-all', async (req, res) => {
+  runAutonomousSweep().catch(err => {
+    appendSystemLog('ERROR', `Autonomous sweep error: ${err.message}`);
+  });
+  res.json({ success: true, message: 'Launched full autonomous discovery sweep across all locations & categories.' });
 });
 
 app.get('/api/logs', (req, res) => {
@@ -280,7 +351,35 @@ app.post('/api/proposals/generate', async (req, res) => {
   }
 });
 
-// --- 7. OPT OUT LIST MANAGERS ---
+// --- 5. PROPOSAL GENERATION ENDPOINT ---
+app.post('/api/generate-proposal', async (req, res) => {
+  try {
+    const { clientName, projectScope, targetTech } = req.body;
+    
+    if (!clientName || !projectScope) {
+      return res.status(400).json({ error: 'clientName and projectScope are required.' });
+    }
+
+    appendSystemLog('INFO', `Generating AI Scope of Work Proposal for: ${clientName}`);
+    
+    // Convert targetTech string back to array if it's a comma-separated string
+    let techArray = [];
+    if (typeof targetTech === 'string') {
+      techArray = targetTech.split(',').map(t => t.trim()).filter(Boolean);
+    } else if (Array.isArray(targetTech)) {
+      techArray = targetTech;
+    }
+
+    const sowMarkdown = await generateProposal(clientName, projectScope, techArray);
+    
+    res.json({ success: true, proposal: sowMarkdown });
+  } catch (err) {
+    appendSystemLog('ERROR', `Proposal generation failed: ${err.message}`);
+    res.status(500).json({ error: 'Failed to generate proposal.' });
+  }
+});
+
+// --- 6. OPT-OUT & SETTINGS MANAGEMENT ---
 app.get('/api/optouts', (req, res) => {
   res.json({ optOuts: getOptOuts() });
 });
@@ -321,28 +420,45 @@ app.post('/api/settings', async (req, res) => {
 app.post('/api/bot/status', async (req, res) => {
   const { active } = req.body;
   await updateSettings({ botActive: !!active });
-  const statusStr = active ? '🟢 BOT ONLINE' : '🔴 BOT PAUSED';
-  appendSystemLog('INFO', `Bot Status Changed: ${statusStr}`);
+  const statusStr = active ? '🟢 AUTOMATION ONLINE (Auto-Scanning All Locations & Categories)' : '🔴 AUTOMATION PAUSED';
+  appendSystemLog('INFO', `Master Automation Toggle Changed: ${statusStr}`);
+
+  if (active) {
+    // Trigger an immediate background discovery sweep when automation is toggled ON
+    runAutonomousSweep().catch(err => {
+      appendSystemLog('ERROR', `Auto-sweep launch error: ${err.message}`);
+    });
+  }
+
   res.json({ success: true, botActive: !!active });
 });
 
+// Round-robin index counters for systematic coverage
+let autoCategoryIndex = 0;
+let autoRegionIndex = 0;
+
 // --- 9. 24/7 CRON ORCHESTRATION ENGINE (EVERY 15 MINUTES) ---
 cron.schedule('*/15 * * * *', async () => {
+  checkAndAutoResumeEmailLimit();
+
   const settings = getSettings();
   if (!settings.botActive) {
-    console.log('[24/7 Engine] Cron trigger skipped — Bot is currently PAUSED.');
+    console.log('[24/7 Engine] Cron trigger skipped — Automation is currently PAUSED.');
     return;
   }
 
-  appendSystemLog('INFO', '⚡ 24/7 Cron Engine triggered: Performing automated lead discovery & follow-up touches...');
+  const categories = ['CustomApps', 'LMS', 'ERP', 'Apps', 'AI', 'Firmware'];
+  const regions = ['India', 'USA', 'Europe', 'Middle East', 'Global'];
+
+  const cat = categories[autoCategoryIndex % categories.length];
+  const reg = regions[autoRegionIndex % regions.length];
+  autoRegionIndex++;
+  if (autoRegionIndex % regions.length === 0) autoCategoryIndex++;
+
+  appendSystemLog('INFO', `⚡ 24/7 Cron Engine triggered: Autonomous scan for Category [${cat}] in Region [${reg}]...`);
 
   try {
-    const categories = ['LMS', 'ERP', 'Apps', 'AI', 'Firmware'];
-    const regions = ['India', 'USA', 'Europe', 'Middle East'];
-    const randomCat = categories[Math.floor(Math.random() * categories.length)];
-    const randomReg = regions[Math.floor(Math.random() * regions.length)];
-
-    await runLeadScraper(randomCat, randomReg);
+    await runLeadScraper(cat, reg);
 
     const leads = getLeads();
     const now = Date.now();
@@ -350,7 +466,6 @@ cron.schedule('*/15 * * * *', async () => {
     for (const lead of leads) {
       if (lead.optedOut || lead.status === 'Opted Out' || !lead.email) continue;
 
-      const createdAgeDays = (now - new Date(lead.createdAt || now).getTime()) / (1000 * 60 * 60 * 24);
       const touchCount = lead.touchCount || 0;
 
       if (touchCount === 0) {
@@ -361,7 +476,42 @@ cron.schedule('*/15 * * * *', async () => {
           lead.touchCount = 1;
           lead.status = 'Pitched';
           lead.lastTouchAt = new Date().toISOString();
+          lead.portfolioKeys = pitch.portfolioKeys || [];
+
+          if (lead.phone) {
+            const waMsg = pitch.whatsappIntro || `Hi ${lead.name.split(' ')[0]}, reached out regarding custom software solutions for ${lead.company || lead.website || 'your business'}. Portfolio: ${BRAND.portfolio}`;
+            await sendOutboundWhatsApp(lead.phone, waMsg);
+          }
+
           await saveLead(lead);
+        }
+      } else if (touchCount > 0) {
+        const nextSchedule = FOLLOWUP_SCHEDULE.find(s => s.touch === touchCount + 1);
+        if (nextSchedule && lead.lastTouchAt) {
+          const daysSinceLastTouch = (now - new Date(lead.lastTouchAt).getTime()) / (1000 * 60 * 60 * 24);
+          
+          if (daysSinceLastTouch >= nextSchedule.dayOffset) {
+            appendSystemLog('INFO', `⚡ [Cron Auto-Outreach] Executing Touch ${touchCount + 1} (${nextSchedule.type}) for lead "${lead.name}"...`);
+            const followUp = await generateFollowUpForLead(lead, nextSchedule.type);
+            const res = await sendOutreachEmail(lead, followUp.subject, followUp.emailBody);
+            
+            if (res.success) {
+              lead.touchCount += 1;
+              lead.status = `Follow-Up ${lead.touchCount}`;
+              lead.lastTouchAt = new Date().toISOString();
+              if (followUp.portfolioKeys && followUp.portfolioKeys.length > 0) {
+                lead.portfolioKeys = followUp.portfolioKeys;
+              }
+              
+              // Phase 2: WhatsApp Autopilot Dispatch
+              if (lead.phone && nextSchedule.type === 'value_add') {
+                const waMsg = `Hi ${lead.name.split(' ')[0]}, just sent over an email regarding some custom software ideas for ${lead.company || lead.domain}. Let me know if you received it! - Fusion Engine Technology`;
+                await sendOutboundWhatsApp(lead.phone, waMsg);
+              }
+              
+              await saveLead(lead);
+            }
+          }
         }
       }
     }
@@ -371,11 +521,12 @@ cron.schedule('*/15 * * * *', async () => {
 });
 
 function startApiServer(portToTry) {
-  const server = app.listen(portToTry, '0.0.0.0', () => {
-    appendSystemLog('INFO', `Fusion Engine REST API listening on http://0.0.0.0:${portToTry}`);
-    console.log(`[API Server] Running on http://0.0.0.0:${portToTry}`);
+  const server = app.listen(portToTry, HOST, () => {
+    appendSystemLog('INFO', `Fusion Engine REST API listening on http://${HOST}:${portToTry}`);
+    console.log(`[API Server] Running on http://${HOST}:${portToTry}`);
     
     initializeWhatsAppBot().catch(_ => {});
+    initializeImapListener().catch(_ => {});
   });
 
   server.on('error', (err) => {
