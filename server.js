@@ -28,7 +28,7 @@ const { initializeWhatsAppBot, processInboundReply, sendOutboundWhatsApp } = req
 const { initializeImapListener } = require('./src/bot/emailListener');
 
 const app = express();
-const HOST = process.env.HOST || '0.0.0.0';
+const HOST = '0.0.0.0';
 const PORT = parseInt(process.env.PORT || process.env.PORT_API || '3000', 10);
 const PASSWORD = process.env.DASHBOARD_PASSWORD || 'fusion2026';
 
